@@ -85,12 +85,13 @@ mkdir /home/$user/Pictures
 
 #Install filemanager
 apt-get install ranger pip -y
+sleep 1
 ranger --copy-config=all
 pip3 install ueberzug
 
 #Customization
 cp /home/$user/.dwm/resc/wall.jpg /home/$user/Pictures/
-cp /home/$user/.dwm/resc/sourcecodepro /usr/share/fonts/opentype/
+cp -R /home/$user/.dwm/resc/sourcecodepro /usr/share/fonts/opentype/
 fc-cache -fv
 cp -f /home/$user/.dotfiles/{.xinitrc,.bashrc} /home/$user/
 cp -f /home/$user/.dotfiles/rc.conf /home/$user/.config/ranger/
