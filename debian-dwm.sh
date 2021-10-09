@@ -80,13 +80,10 @@ echo 'EndSection' >> /etc/X11/xorg.conf.d/70-synaptics.conf
 #Install image viewer and compositor
 apt-get install feh compton -y
 mkdir /home/$user/Pictures
-##sed -i '1ifeh --bg-center /Pictures/wall.jpg' /home/$user/.xinitrc
-##sed -i '2icompton -f &' /home/$user/.xinitrc
 
 #Install filemanager
 apt-get install ranger pip -y
-sleep 1
-ranger --copy-config=all
+su -c "ranger --copy-config=all" -s /bin/sh $user
 pip3 install ueberzug
 
 #Customization
@@ -95,7 +92,6 @@ cp -R /home/$user/.dwm/resc/sourcecodepro /usr/share/fonts/opentype/
 fc-cache -fv
 cp -f /home/$user/.dotfiles/{.xinitrc,.bashrc} /home/$user/
 cp -f /home/$user/.dotfiles/rc.conf /home/$user/.config/ranger/
-
 
 #Xrandr for automated resolution in vm
 echo "Is this a Virtual Machine? [y/n]"
