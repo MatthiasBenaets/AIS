@@ -5,19 +5,20 @@ useradd -m -G users,wheel,audio,video,cdrom,usb -s /bin/bash $user
 echo "Choose a password"
 passwd $user
 
-emerge app-admin/sudo
+emerge app-admin/sudo dev-vcs/git
 sed '82d' /etc/sudoers
 sed -i '82i%wheel ALL=(ALL) ALL' /etc/sudoers
 
 rm -rf /stage3-*.tar.xz
-rm -rf /AIS-test
 
-env-update
-source /etc/profile
 cd /home/$user
 
 #Installing Display Server | Window Manager | Terminal | File Viewer | Compositor
-emerge -av x11-wm/dwm x11-terms/st x11-misc/dmenu x11-apps/setxkbmap x11-apps/xrandr x11-misc/compton dev-vcs/git media-gfx/feh app-misc/ranger
+emerge -v x11-base/xorg-server x11-base/xorg-drivers
+env-update
+source /etc/profile
+
+emerge -v x11-wm/dwm x11-terms/st x11-misc/dmenu x11-apps/setxkbmap x11-apps/xrandr x11-misc/compton media-gfx/feh app-misc/ranger
 rc-update add elogind boot
 
 git clone https://www.github.com/MatthiasBenaets/dwm /home/$user/dwm

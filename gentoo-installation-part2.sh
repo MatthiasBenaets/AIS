@@ -46,9 +46,8 @@ sed -i '17d' /etc/hosts
 sed -i '17i127.0.0.1         gentoo   localhost' /etc/hosts
 sed -i '18i::1               gentoo   localhost' /etc/hosts
 
-(
-echo "My_hard_password"
-) | passwd
+echo "Give a root password:"
+passwd
 
 #Installing tools
 emerge app-admin/sysklogd
@@ -62,9 +61,12 @@ emerge net-misc/dhcpcd
 emerge --verbose sys-boot/grub:2
 grub-install /dev/sda
 grub-mkconfig -o /boot/grub/grub.cfg
+
+echo "-------------------------------------"
+echo "         RUN THESE COMMANDS          "
+echo "-------------------------------------"
 echo "exit"
 echo "cd"
 echo "umount -l /mnt/gentoo/dev{/shm,/pts,}"
 echo "umount -R /mnt/gentoo"
 echo "reboot"
-echo "run above cmds manually"

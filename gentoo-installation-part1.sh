@@ -1,6 +1,7 @@
 #!/bin/bash
-#wget https://www.github.com/MatthiasBenaets/AIS/archive/main.zip
-#unzip & run
+#wget https://raw.githubusercontent.com/MatthiasBenaets/AIS/main/gentoo-installation-part1.sh
+#chmod +x gentoo-installation-part1.sh
+#./gentoo-installation-part1.sh
 
 #Preparing the disks
 (
@@ -34,7 +35,7 @@ sed -i '5iCOMMON_FLAGS="-O2 -pipe -march=native"' /mnt/gentoo/etc/portage/make.c
 sed -i '10iMAKEOPTS="-j6"' /mnt/gentoo/etc/portage/make.conf
 sed -i '11iACCEPT_LICENSE="*"' /mnt/gentoo/etc/portage/make.conf
 sed -i '12iINPUT_DEVICES="libinput synaptics"' /mnt/gentoo/etc/portage/make.conf
-sed -i '13iUSE="-aqua -gnome -ios -ipod -kde -systemd -wayland -xfce alsa pulseaudio savedconfig X"' /mnt/gentoo/etc/portage/make.conf
+sed -i '13iUSE="-aqua -gnome -ios -ipod -kde -systemd -wayland -xfce alsa elogind pulseaudio savedconfig X"' /mnt/gentoo/etc/portage/make.conf
 
 #Installing base system
 mirrorselect -i -o >> /mnt/gentoo/etc/portage/make.conf
@@ -48,6 +49,11 @@ mount --make-rslave /mnt/gentoo/sys
 mount --rbind /dev /mnt/gentoo/dev
 mount --make-rslave /mnt/gentoo/dev
 
+echo "------------------------------------------------------"
+echo "                RUN THESE COMMANDS                    "
+echo "------------------------------------------------------"
 echo "chroot /mnt/gentoo /bin/bash"
 echo "source /etc/profile"
-echo "run installation-part2 after doing cmds above manually"
+echo "wget https://raw.githubusercontent.com/MatthiasBenaets/AIS/main/gentoo-installation-part2.sh"
+echo "chmod +x gentoo-installation-part2.sh"
+echo "./gentoo-installation-part2.sh"
