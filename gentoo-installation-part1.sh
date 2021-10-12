@@ -34,7 +34,7 @@ sed -i '5iCOMMON_FLAGS="-O2 -pipe -march=native"' /mnt/gentoo/etc/portage/make.c
 sed -i '10iMAKEOPTS="-j6"' /mnt/gentoo/etc/portage/make.conf
 sed -i '11iACCEPT_LICENSE="*"' /mnt/gentoo/etc/portage/make.conf
 sed -i '12iINPUT_DEVICES="libinput synaptics"' /mnt/gentoo/etc/portage/make.conf
-sed -i '13iUSE="-aqua -gnome -ios -ipod -kde -systemd -wayland -xfce alsa pulseaudio X"' /mnt/gentoo/etc/portage/make.conf
+sed -i '13iUSE="-aqua -gnome -ios -ipod -kde -systemd -wayland -xfce alsa pulseaudio savedconfig X"' /mnt/gentoo/etc/portage/make.conf
 
 #Installing base system
 mirrorselect -i -o >> /mnt/gentoo/etc/portage/make.conf
