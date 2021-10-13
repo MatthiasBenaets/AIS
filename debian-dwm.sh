@@ -39,7 +39,7 @@ echo '}' >> /etc/wpa_supplicant/wpa_supplicant.conf
 fi
 
 #Install dependencies for Suckless
-apt-get install gcc libx11-dev libxft-dev libxinerama-dev fonts-font-awesome -y
+apt-get install gcc libx11-dev libxft-dev libxinerama-dev fonts-font-awesome sxhkd -y
 
 #Cloning the github repos
 git clone https://www.github.com/MatthiasBenaets/dwm /home/$user/.dwm
@@ -91,7 +91,9 @@ cp /home/$user/.dwm/resc/wall.jpg /home/$user/Pictures/
 cp -R /home/$user/.dwm/resc/sourcecodepro /usr/share/fonts/opentype/
 fc-cache -fv
 cp -f /home/$user/.dotfiles/{.xinitrc,.bashrc} /home/$user/
-cp -f /home/$user/.dotfiles/rc.conf /home/$user/.config/ranger/
+cp -f /home/$user/.dotfiles/.config/ranger/rc.conf /home/$user/.config/ranger/
+mkdir /home/$user/.config/sxhkd
+cp -f /home/$user/.dotfiles/.config/sxhkd/sxhkdrc /home/$user/.config/sxhkd/
 
 #Xrandr for automated resolution in vm
 echo "Is this a Virtual Machine? [y/n]"

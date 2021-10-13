@@ -18,7 +18,7 @@ emerge -v x11-base/xorg-server x11-base/xorg-drivers
 env-update
 source /etc/profile
 
-emerge -v x11-wm/dwm x11-terms/st x11-misc/dmenu x11-apps/setxkbmap x11-apps/xrandr x11-misc/compton media-gfx/feh app-misc/ranger media-fonts/fontawesome
+emerge -v x11-wm/dwm x11-terms/st x11-misc/dmenu x11-apps/setxkbmap x11-apps/xrandr x11-misc/compton x11-misc/sxhkd x11-apps/xsetroot media-gfx/feh app-misc/ranger media-fonts/fontawesome media-sound/pulseaudio media-sound/pulsemixer
 rc-update add elogind boot
 
 #Downloading git repo
@@ -33,7 +33,7 @@ sed -i '2isetxkbmap be' /home/$user/.xinitrc
 echo "Is this a Virtual Machine? [y/n]"
 read vm
 if [ "$vm" = "y" ]; then
-	sed -i '2ixrandr --output Virtual-1 --mode 1280x960' /home/$user/.xinitrc 
+	sed -i '1ixrandr --output Virtual-1 --mode 1280x960' /home/$user/.xinitrc 
 fi
 echo "startx" >> /etc/profile
 
@@ -55,12 +55,18 @@ fc-cache -fv
 mkdir /home/$user/Pictures
 cp /home/$user/dwm/resc/wall.jpg /home/$user/Pictures/
 su -c "ranger --copy-config=all" -s /bin/sh $user
-cp -f /home/$user/dotfiles/rc.conf /home/$user/.config/ranger/
+cp -f /home/$user/dotfiles/.config/ranger/rc.conf /home/$user/.config/ranger/
+mkdir /home/$user/.config/sxhkd
+cp -f /home/$user/dotfiles/.config/sxhkd/sxhkdrc /home/$user/.config/sxhkd/
+echo "PS1='\[\033[01;32m\]\u\[\033[00m\]\[\033[00;37m\]@\[\033[00m\]\[\033[01;32m\]\h\[\033[00m\]:\[\033[00;36m\]\w\[\033[00m\]\$ '" >> /home/$user/.bashrc
+mkdir /home/$user/.local/share/dwm
+cp /user/$user/dotfiles/.local/share/dwm/autostart.sh /home/$user/.local/share/dwm
 
 #Optional for ranger preview:
 #emerge dev-python/pip
-#pip3 install ueberzug
+#pip3 install --user ueberzug
 
 #Rebuild and reboot
-emerge dwm st
+emerge dwm 
+emerge st
 sudo reboot
