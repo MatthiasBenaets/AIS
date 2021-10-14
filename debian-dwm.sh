@@ -29,8 +29,8 @@ echo "Enter Network Password:"
 read pass
 touch /etc/wpa_supplicant/wpa_supplicant.conf
 echo 'network={' >> /etc/wpa_supplicant/wpa_supplicant.conf
-echo 'ssid='$ssid >> /etc/wpa_supplicant/wpa_supplicant.conf
-echo 'psk='$pass >> /etc/wpa_supplicant/wpa_supplicant.conf
+echo "ssid="$ssid"" >> /etc/wpa_supplicant/wpa_supplicant.conf
+echo "psk="$pass"" >> /etc/wpa_supplicant/wpa_supplicant.conf
 echo 'proto=RSN' >> /etc/wpa_supplicant/wpa_supplicant.conf
 echo 'key_mgmt=WPA-PSK' >> /etc/wpa_supplicant/wpa_supplicant.conf
 echo 'pairwise=CCMP' >> /etc/wpa_supplicant/wpa_supplicant.conf
