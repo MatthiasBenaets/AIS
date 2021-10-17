@@ -49,11 +49,15 @@ mount --make-rslave /mnt/gentoo/sys
 mount --rbind /dev /mnt/gentoo/dev
 mount --make-rslave /mnt/gentoo/dev
 
+#Preparing part2
+wget https://raw.githubusercontent.com/MatthiasBenaets/AIS/main/gentoo-installation-part2.sh
+chmod +x /mnt/gentoo/gentoo-installation-part2.sh
+
 echo "------------------------------------------------------"
 echo "                RUN THESE COMMANDS                    "
 echo "------------------------------------------------------"
 echo "chroot /mnt/gentoo /bin/bash"
 echo "source /etc/profile"
-echo "wget https://raw.githubusercontent.com/MatthiasBenaets/AIS/main/gentoo-installation-part2.sh"
-echo "chmod +x gentoo-installation-part2.sh"
+#wget https://raw.githubusercontent.com/MatthiasBenaets/AIS/main/gentoo-installation-part2.sh"
+#chmod +x gentoo-installation-part2.sh"
 echo "./gentoo-installation-part2.sh"
