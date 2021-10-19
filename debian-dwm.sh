@@ -39,7 +39,7 @@ echo '}' >> /etc/wpa_supplicant/wpa_supplicant.conf
 fi
 
 #Install dependencies for Suckless
-apt-get install gcc libx11-dev libxft-dev libxinerama-dev fonts-font-awesome sxhkd -y
+apt-get install gcc libx11-dev libxft-dev libxinerama-dev libx11-xcb-dev libxcb-res0-dev fonts-font-awesome sxhkd -y
 
 #Cloning the github repos
 git clone https://www.github.com/MatthiasBenaets/dwm /home/$user/.dwm
