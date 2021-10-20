@@ -57,8 +57,6 @@ make clean install
 
 #Startup files
 echo 'startx' >> /etc/profile
-touch /home/$user/.xinitrc
-echo 'exec dwm' >> /home/$user/.xinitrc
 
 #Install sound packages
 apt-get install alsa-utils pulseaudio pulsemixer -y
@@ -91,9 +89,8 @@ cp /home/$user/.dwm/resc/wall.jpg /home/$user/Pictures/
 cp -R /home/$user/.dwm/resc/sourcecodepro /usr/share/fonts/opentype/
 fc-cache -fv
 cp -f /home/$user/.dotfiles/{.xinitrc,.bashrc} /home/$user/
-cp -f /home/$user/.dotfiles/.config/ranger/rc.conf /home/$user/.config/ranger/
-mkdir /home/$user/.config/sxhkd
-cp -f /home/$user/.dotfiles/.config/sxhkd/sxhkdrc /home/$user/.config/sxhkd/
+cp -f /home/$user/.dotfiles/.config/ /home/$user/
+
 
 #Xrandr for automated resolution in vm
 echo "Is this a Virtual Machine? [y/n]"
