@@ -1,8 +1,17 @@
 #!/bin/bash
 
-#Have a user with sudo. Add '$username ALL=(ALL:ALL) ALL' to /etc/sudoers
-#Run script with use as user (not root)
-#If wrong keyboard layout, add for example "setxbmap be" to .xinitrc
+##########################################################################
+#			SUCKLESS INSTALLATION SCRIPT			 #
+#									 #
+# Make sure sudo & wget is installed					 #
+# - apt install sudo wget / pacman -S sudo wget / xbps-install sudo wget #
+# - give user root priviliges: /etc/sudoers -> $USER ALL=(ALL:ALL) ALL   #
+# Run script in ~/. with sudo						 #
+# - chmod +x suckless-installer.sh					 #
+# - sudo ./suckless-installer.sh					 #
+# After installation, choose correct keyboard layout			 #
+# - vim /home/$USER/.xinitrc --> setxkbmap $LAYOUT			 #
+##########################################################################
 
 #Variables
 yes="^(y|yes|Y|Yes|YES|"")$"
@@ -48,7 +57,7 @@ do
 		read -p $'SSID: ' SSID
 		read -p $'Password: ' PASS
 		VALID=true
-	elif [[ "$WIFI" =~ $no ]];then
+	elif [[ "$WIFI" =~ $no ]]; then
 		echo "Excluding wifi setup"
 		VALID=true
 	else 
@@ -88,9 +97,9 @@ if [ "$DISTRO" = 1 ]; then
 	apt update -y
 	apt upgrade -y
 elif [ "$DISTRO" = 2 ]; then
-	pacman -Syu
+	yes | pacman -Syu
 elif [ "$DISTRO" = 3 ]; then
-	xbps-install -Su
+	xbps-install -Suy
 fi
 
 #Setting up wifi
@@ -99,7 +108,7 @@ if [[ "$DISTRO" =~ ^(1|2)$ ]]; then
 	read -p 'What is your wifi-card name (case sensitive): ' CARD
 	echo "auto $CARD" >> /etc/network/interfaces
 	echo "allow-hotplug $CARD" >> /etc/network/interfaces
-	echo 'iface wlo1 inet dhcp' >> /etc/network/interfaces
+	echo "iface $CARD inet dhcp" >> /etc/network/interfaces
 	echo 'wpa-conf /etc/wpa_supplicant/wpa_supplicant.conf' >> /etc/network/interfaces
 	echo 'iface default inet dhcp' >> /etc/network/interfaces
 
@@ -120,9 +129,9 @@ if [ "$DISTRO" = 1 ]; then
 	apt-get install xorg make gcc libx11-dev libxft-dev libxinerama-dev libx11-xcb-dev libxcb-res0-dev fonts-font-awesome sxhkd git alsa-utils pulseaudio pulsemixer feh compton ranger python3-pip vim -y
 	pip3 install ueberzug
 elif [ "$DISTRO" = 2 ]; then
-	pacman -S 
+	yes | pacman -S xorg make gcc libx11 libxft libxinerama libxcb xorg-setxkbmap xorg-xrandr xorg-xsetroot ttf-font-awesome sxhkd git alsa-utils pulseaudio pulsemixer feh xcompmgr ranger ueberzug vim
 elif [ "$DISTRO" = 3 ]; then
-	xbps-install xorg gcc pkg-config libX11-devel libXft-devel libXinerama-devel ueberzug setxkbmap xsetroot font-awesome sxhkd git alsa-utils pulseaudio pulsemixer feh compton ranger vim -y
+	xbps-install xorg make gcc pkg-config libX11-devel libXft-devel libXinerama-devel setxkbmap xsetroot font-awesome sxhkd git alsa-utils pulseaudio pulsemixer feh compton ranger ueberzug vim -y
 fi
 
 #Cloning github repos and installation
@@ -147,12 +156,34 @@ fc-cache -fv
 cp -f /home/$USER/.dotfiles/.xinitrc /home/$USER
 cp -r /home/$USER/.dotfiles/.config /home/$USER
 
+sed '9d' /home/$USER/.dwm/autostart.sh
+sed '9d' /home/$USER/.dwm/autostart.sh
+if [ "$DISTRO" = 1 ]; then
+	sed -i '9iUPGRADE=$(apt list --upgradeable | wc -l)' /home/$USER/.dwm/autostart.sh
+	sed -i '10iecho " $((UPGRADE-1))"' /home/$USER/.dwm/autostart.sh
+elif [ "$DISTRO" = 2  ]; then
+	sed -i '9iUPGRADE=$(pacman -Qu | wc -l)' /home/$USER/.dwm/autostart.sh
+	sed -i '10iecho " $((UPGRADE))"' /home/$USER/.dwm/autostart.sh
+elif [ "$DISTRO" = 3 ]; then
+	sed -i '9iUPGRADE=$(xbps-install -Suvn | wc -l)' /home/$USER/.dwm/autostart.sh
+	sed -i '10iecho " $((UPGRADE))"' /home/$USER/.dwm/autostart.sh
+fi
+
+if [ "$DISTRO" = 2 ]; then
+	sed '7d' /home/$USER/.bashrc
+	sed -i '7iPS1=\[\033[01;32m\]\u\[\033[00m\]\[\033[00;37m\]@\[\033[00m\]\[\033[01;32m\]\h\[\033[00m\]:\[\033[00;36m\]\w\[\033[00m\]\$ ' /home/$USER/.bashrc
+elif [ "$DISTRO" = 3 ]; then
+	sed '9d' /home/$USER/.bashrc
+	sed -i '9iPS1=\[\033[01;32m\]\u\[\033[00m\]\[\033[00;37m\]@\[\033[00m\]\[\033[01;32m\]\h\[\033[00m\]:\[\033[00;36m\]\w\[\033[00m\]\$ ' /home/$USER/.bashrc
+
+fi
+
 #Bluetooth
 if [ "$BLT" = $yes ]; then
 	if [ "$DISTRO" = 1 ]; then
 		apt-get install bluez blueman -y
 	elif [ "$DISTRO" = 2 ]; then
-		
+		yes | pacman -S bluez blueman
 	elif [ "$DISTRO" = 3 ]; then
 		xbps-install bluez blueman -y
 	fi
@@ -160,6 +191,7 @@ if [ "$BLT" = $yes ]; then
 fi
 #Trackpad
 if [ "$PAD" = $yes ]; then
+	mkdir /etc/X11/org.conf.d
 	touch /etc/X11/org.conf.d/70-synaptics.conf
 	echo 'Section "InputClass"' >> /etc/X11/org.conf.d/70-synaptics.conf
 	echo 'Identifier "touchpad"' >> /etc/X11/org.conf.d/70-synaptics.conf
