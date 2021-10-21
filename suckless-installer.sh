@@ -178,6 +178,11 @@ elif [ "$DISTRO" = 3 ]; then
 
 fi
 
+if [ "$DISTRO" = 2 ]; then
+	sed '4d' /home/$USER/.xinitrc
+	sed -i '4ixcompmgr &' /home/$USER/.xinitrc
+fi
+
 #Bluetooth
 if [ "$BLT" = $yes ]; then
 	if [ "$DISTRO" = 1 ]; then
