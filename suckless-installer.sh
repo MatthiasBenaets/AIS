@@ -5,8 +5,8 @@
 #If wrong keyboard layout, add for example "setxbmap be" to .xinitrc
 
 #Variables
-yes="^(y|yes|Y|Yes|"")$"
-no="^(n|no|N|No)$"
+yes="^(y|yes|Y|Yes|YES|"")$"
+no="^(n|no|N|No|NO)$"
 VALID=false
 DISTRO=null
 USER=null
@@ -108,7 +108,7 @@ fi
 #Setting up wifi
 if [[ "$DISTRO" =~ ^(1|2)$ ]]; then
 	ip a
-	read -p 'What is your wifi-card name (case sensitive)' CARD
+	read -p 'What is your wifi-card name (case sensitive): ' CARD
 	echo "auto $CARD" >> /etc/network/interfaces
 	echo "allow-hotplug $CARD" >> /etc/network/interfaces
 	echo 'iface wlo1 inet dhcp' >> /etc/network/interfaces
@@ -130,7 +130,7 @@ fi
 
 #Installing packages and dependencies
 if [ "$DISTRO" = 1 ]; then
-	apt-get install xorg make gcc libx11-dev libxft-dev libxinerama-dev libx11-xcb-dev lib-xcb-res0-dev fonts-font-awesome setxkbmap xsetroot sxhkd git alsa-utils pulseaudio pulsemixer feh compton ranger pip vim -y
+	apt-get install xorg make gcc libx11-dev libxft-dev libxinerama-dev libx11-xcb-dev libxcb-res0-dev fonts-font-awesome setxkbmap sxhkd git alsa-utils pulseaudio pulsemixer feh compton ranger pip vim -y
 	pip3 install ueberzug
 elif [ "$DISTRO" = 2 ]; then
 	pacman -S 
@@ -162,11 +162,11 @@ cp -r /home/$USER/.dotfiles/.config /home/$USER
 
 #Bluetooth
 if [ "$BLT" = $yes ]; then
-	if ["$DISTRO" = 1 ]; then
+	if [ "$DISTRO" = 1 ]; then
 		apt-get install bluez blueman -y
-	elif ["$DISTRO" = 2 ]; then
+	elif [ "$DISTRO" = 2 ]; then
 		
-	elif ["$DISTRO" = 3 ]; then
+	elif [ "$DISTRO" = 3 ]; then
 		xbps-install bluez blueman -y
 	fi
 	sed -i '67iload-module module-switch-on-connect' /etc/pulse/default.pa
@@ -188,4 +188,4 @@ if [ "$VM" = $yes ]; then
 	sed -i '1ixrandr --output Virtual1 --mode 1280x960' /home/$USER/.xinitrc
 fi
 
-reboot
+sudo reboot
