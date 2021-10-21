@@ -57,19 +57,6 @@ do
 	fi
 done
 VALID=false
-read -p $'Is this a virtual machine? [Y/n]: ' VM
-until [[ "$VALID" = true ]]
-do
-	if [[ "$VM" =~ $yes ]]; then
-		VALID=true
-	elif [[ "$VM" =~ $no ]]; then
-		VALID=true
-	else
-		echo "Non-valid input"
-		read -p 'Try again [Y/n]: ' VM
-	fi	
-done
-VALID=false
 read -p $'Setup Bluetooth? [Y/n]: ' BLT
 until [[ "$VALID" = true ]]
 do
@@ -95,6 +82,7 @@ do
 		read -p 'Try again [Y/n]: ' PAD
 	fi	
 done
+
 #Base update
 if [ "$DISTRO" = 1 ]; then
 	apt update -y
@@ -117,7 +105,6 @@ if [[ "$DISTRO" =~ ^(1|2)$ ]]; then
 
 	mkdir /etc/wpa_supplicant
 	touch /etc/wpa_supplicant/wpa_supplicant.conf
-	touch /etc/wpa_supplicant/wpa_supplicant.conf
 	echo 'network={' >> /etc/wpa_supplicant/wpa_supplicant.conf
 	echo "ssid="$SSID"" >> /etc/wpa_supplicant/wpa_supplicant.conf
 	echo "psk="$PASS"" >> /etc/wpa_supplicant/wpa_supplicant.conf
@@ -130,7 +117,7 @@ fi
 
 #Installing packages and dependencies
 if [ "$DISTRO" = 1 ]; then
-	apt-get install xorg make gcc libx11-dev libxft-dev libxinerama-dev libx11-xcb-dev libxcb-res0-dev fonts-font-awesome setxkbmap sxhkd git alsa-utils pulseaudio pulsemixer feh compton ranger pip vim -y
+	apt-get install xorg make gcc libx11-dev libxft-dev libxinerama-dev libx11-xcb-dev libxcb-res0-dev fonts-font-awesome sxhkd git alsa-utils pulseaudio pulsemixer feh compton ranger python3-pip vim -y
 	pip3 install ueberzug
 elif [ "$DISTRO" = 2 ]; then
 	pacman -S 
@@ -183,7 +170,22 @@ if [ "$PAD" = $yes ]; then
 	echo 'EndSection' >> /etc/X11/org.conf.d/70-synaptics.conf
  
 fi
+
 #Virtual Machine resolution
+VALID=false
+read -p $'Is this a virtual machine? [Y/n]: ' VM
+until [[ "$VALID" = true ]]
+do
+	if [[ "$VM" =~ $yes ]]; then
+		VALID=true
+	elif [[ "$VM" =~ $no ]]; then
+		VALID=true
+	else
+		echo "Non-valid input"
+		read -p 'Try again [Y/n]: ' VM
+	fi	
+done
+
 if [ "$VM" = $yes ]; then
 	sed -i '1ixrandr --output Virtual1 --mode 1280x960' /home/$USER/.xinitrc
 fi
