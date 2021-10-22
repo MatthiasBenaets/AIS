@@ -5,15 +5,16 @@
 #									 #
 # Make sure sudo & wget is installed					 #
 # - apt install sudo wget / pacman -S sudo wget / xbps-install sudo wget #
+#   - If unable, update/upgrade package manager (see #BASE UPDATE)	 #
 # - give user root priviliges: /etc/sudoers -> $USER ALL=(ALL:ALL) ALL   #
-# Run script in ~/. with sudo						 #
+# Run script in home directory with sudo				 #
 # - chmod +x suckless-installer.sh					 #
 # - sudo ./suckless-installer.sh					 #
-# After installation, choose correct keyboard layout			 #
+# After installation, choose correct keyboard layout if needed		 #
 # - vim /home/$USER/.xinitrc --> setxkbmap $LAYOUT			 #
 ##########################################################################
 
-#Variables
+#VARIABLES
 yes="^(y|yes|Y|Yes|YES|"")$"
 no="^(n|no|N|No|NO)$"
 prompt="PS1='\\\[\\\033[01;32m\\\]\\\u\\\[\\\033[00m\\\]\\\[\\\033[00;37m\\\]@\\\[\\\033[00m\\\]\\\[\\\033[01;32m\\\]\\\h\\\[\\\033[00m\\\]:\\\[\\\033[00;36m\\\]\\\w\\\[\\\033[00m\\\]\\\$ '"
@@ -28,7 +29,7 @@ CARD=null
 BLT=null
 PAD=null
 
-#Choosing distribution to install suckless desktop on.
+#CHOOSE DISTRIBUTION TO INSTALL SUCKLESS DESKTOP
 read -rep $'Step 1\nWhat package manager does your distro use?\n[1]-Apt\t\t(Debian)\n[2]-Pacman\t( Arch )\n[3]-XBPS\t( Void )\nWM: ' DISTRO
 
 until [[ "$VALID" = true ]]
@@ -48,8 +49,10 @@ do
 	fi
 done
 
-#Basic user input settings
+#BASIC USER INPUT SETTINGS
+##Username
 read -p $'What is your username (case sensitive): ' USER
+##Wifi
 read -p $'Do you need wifi? [Y/n]: ' WIFI
 VALID=false
 until [[ "$VALID" = true ]]
@@ -66,6 +69,7 @@ do
 		read -p 'Try again [Y/n]: ' WIFI
 	fi
 done
+##Bluetooth
 VALID=false
 read -p $'Setup Bluetooth? [Y/n]: ' BLT
 until [[ "$VALID" = true ]]
@@ -79,6 +83,7 @@ do
 		read -p 'Try again [Y/n]: ' BLT
 	fi	
 done
+##Trackpad natural scrolling
 VALID=false
 read -p $'Trackpad natural scrolling? [Y/n]: ' PAD
 until [[ "$VALID" = true ]]
@@ -93,7 +98,7 @@ do
 	fi	
 done
 
-#Base update
+#BASE UPDATE
 if [ "$DISTRO" = 1 ]; then
 	apt update -y
 	apt upgrade -y
@@ -103,7 +108,7 @@ elif [ "$DISTRO" = 3 ]; then
 	xbps-install -Suy
 fi
 
-#Installing packages and dependencies
+#INSTALL PACKAGES AND DEPENDENCIES
 if [ "$DISTRO" = 1 ]; then
 	apt-get install xorg make gcc libx11-dev libxft-dev libxinerama-dev libx11-xcb-dev libxcb-res0-dev fonts-font-awesome sxhkd git alsa-utils pulseaudio pulsemixer feh compton ranger python3-pip vim -y
 	pip3 install ueberzug
@@ -113,7 +118,7 @@ elif [ "$DISTRO" = 3 ]; then
 	xbps-install xorg make gcc pkg-config libX11-devel libXft-devel libXinerama-devel setxkbmap xsetroot font-awesome sxhkd git alsa-utils pulseaudio pulsemixer feh compton ranger ueberzug vim -y
 fi
 
-#Setting up wifi
+#SETTING UP WIFI
 if [[ "$DISTRO" =~ ^(1|2)$ ]] && [[ "$WIFI" =~ $yes ]]; then
 	ip a
 	read -p 'What is your wifi-card name (case sensitive): ' CARD
@@ -137,12 +142,14 @@ if [[ "$DISTRO" =~ ^(1|2)$ ]] && [[ "$WIFI" =~ $yes ]]; then
 	echo '}' >> /etc/wpa_supplicant/wpa_supplicant.conf
 fi
 
-#Cloning github repos and installation
+#CLONING SUCKLESS SOFTWARE
+##Cloning Github
 git clone https://www.github.com/MatthiasBenaets/dwm /home/$USER/.dwm
 git clone https://www.github.com/MatthiasBenaets/st /home/$USER/.st
 git clone https://www.github.com/MatthiasBenaets/dotfiles /home/$USER/.dotfiles
 git clone https://git.suckless.org/dmenu /home/$USER/.dmenu
 
+##Installing repositories
 cd /home/$USER/.dwm
 make clean install
 cd /home/$USER/.st
@@ -150,15 +157,23 @@ make clean install
 cd /home/$USER/.dmenu
 make clean install
 
-#Startup files and dotfiles
+#STARTUP FILES AND DOTFILES
+##Autostart Xserver on login
 echo 'startx' >> /etc/profile
+
+##Wallpaper
 mkdir /home/$USER/Pictures
 cp /home/$USER/.dwm/resc/wall.jpg /home/$USER/Pictures
+
+##Installing custom font
 cp -r /home/$USER/.dwm/resc/sourcecodepro /usr/share/fonts/opentype/
 fc-cache -fv
+
+##Copying dotfiles
 cp -f /home/$USER/.dotfiles/.xinitrc /home/$USER
 cp -r /home/$USER/.dotfiles/.config /home/$USER
 
+##Edit autostart show available updates
 sed -i '9d' /home/$USER/.dwm/autostart.sh
 sed -i '9d' /home/$USER/.dwm/autostart.sh
 if [ "$DISTRO" = 1 ]; then
@@ -172,23 +187,25 @@ elif [ "$DISTRO" = 3 ]; then
 	sed -i '10iecho " $((UPGRADE))"' /home/$USER/.dwm/autostart.sh
 fi
 
+##Edit .bashrc PS1
 if [ "$DISTRO" = 1 ]; then
 	sed -i '60d' /home/$USER/.bashrc
 	sed -i "60i$prompt" /home/$USER/.bashrc
 elif [ "$DISTRO" = 2 ]; then
 	sed -i '9d' /home/$USER/.bashrc
-	sed -i "9i$prompt" /home/$USER/.bashrc
+	echo "$prompt" >> /home/$USER/.bashrc
 elif [ "$DISTRO" = 3 ]; then
 	sed -i '7d' /home/$USER/.bashrc
-	sed -i "7i$prompt" /home/$USER/.bashrc
+	echo "$prompt" >> /home/$USER/.bashrc
 fi
 
+##Compositor Pacman
 if [ "$DISTRO" = 2 ]; then
 	sed -i '4d' /home/$USER/.xinitrc
 	sed -i '4ixcompmgr &' /home/$USER/.xinitrc
 fi
 
-#Bluetooth
+#BLUETOOTH
 if [[ "$BLT" =~ $yes ]]; then
 	if [ "$DISTRO" = 1 ]; then
 		apt-get install bluez blueman -y
@@ -199,7 +216,7 @@ if [[ "$BLT" =~ $yes ]]; then
 	fi
 	sed -i '67iload-module module-switch-on-connect' /etc/pulse/default.pa
 fi
-#Trackpad
+#TRACKPAD
 if [[ "$PAD" =~ $yes ]]; then
 	mkdir /etc/X11/xorg.conf.d
 	touch /etc/X11/xorg.conf.d/70-synaptics.conf
@@ -213,7 +230,7 @@ if [[ "$PAD" =~ $yes ]]; then
  
 fi
 
-#Virtual Machine resolution
+#VIRTUAL MACHINE RESOLUTION
 VALID=false
 read -p $'Is this a virtual machine? [Y/n]: ' VM
 until [[ "$VALID" = true ]]
@@ -231,7 +248,7 @@ done
 if [[ "$VM" =~ $yes ]]; then
 	sed -i '1ixrandr --output Virtual1 --mode 1280x960' /home/$USER/.xinitrc
 fi
-
+#DONE
 echo "Installation complete"
 sleep 0.5
 echo "Rebooting"
