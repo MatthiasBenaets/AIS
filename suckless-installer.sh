@@ -16,6 +16,7 @@
 #Variables
 yes="^(y|yes|Y|Yes|YES|"")$"
 no="^(n|no|N|No|NO)$"
+prompt="PS1='\\\[\\\033[01;32m\\\]\\\u\\\[\\\033[00m\\\]\\\[\\\033[00;37m\\\]@\\\[\\\033[00m\\\]\\\[\\\033[01;32m\\\]\\\h\\\[\\\033[00m\\\]:\\\[\\\033[00;36m\\\]\\\w\\\[\\\033[00m\\\]\\\$ '"
 VALID=false
 DISTRO=null
 USER=null
@@ -169,13 +170,15 @@ elif [ "$DISTRO" = 3 ]; then
 	sed -i '10iecho " $((UPGRADE))"' /home/$USER/.dwm/autostart.sh
 fi
 
-if [ "$DISTRO" = 2 ]; then
+if [ "$DISTRO" = 1 ]; then
+	sed '60d' /home/$USER/.bashrc
+	sed -i "60i$prompt" /home/$USER/.bashrc
+elif [ "$DISTRO" = 2 ]; then
 	sed '7d' /home/$USER/.bashrc
-	sed -i '7iPS1=\[\033[01;32m\]\u\[\033[00m\]\[\033[00;37m\]@\[\033[00m\]\[\033[01;32m\]\h\[\033[00m\]:\[\033[00;36m\]\w\[\033[00m\]\$ ' /home/$USER/.bashrc
+	sed -i "7i$prompt" /home/$USER/.bashrc
 elif [ "$DISTRO" = 3 ]; then
 	sed '9d' /home/$USER/.bashrc
-	sed -i '9iPS1=\[\033[01;32m\]\u\[\033[00m\]\[\033[00;37m\]@\[\033[00m\]\[\033[01;32m\]\h\[\033[00m\]:\[\033[00;36m\]\w\[\033[00m\]\$ ' /home/$USER/.bashrc
-
+	sed -i "9i$prompt" /home/$USER/.bashrc
 fi
 
 if [ "$DISTRO" = 2 ]; then
@@ -184,7 +187,7 @@ if [ "$DISTRO" = 2 ]; then
 fi
 
 #Bluetooth
-if [ "$BLT" = $yes ]; then
+if [ "$BLT" =~ $yes ]; then
 	if [ "$DISTRO" = 1 ]; then
 		apt-get install bluez blueman -y
 	elif [ "$DISTRO" = 2 ]; then
@@ -195,7 +198,7 @@ if [ "$BLT" = $yes ]; then
 	sed -i '67iload-module module-switch-on-connect' /etc/pulse/default.pa
 fi
 #Trackpad
-if [ "$PAD" = $yes ]; then
+if [ "$PAD" =~ $yes ]; then
 	mkdir /etc/X11/org.conf.d
 	touch /etc/X11/org.conf.d/70-synaptics.conf
 	echo 'Section "InputClass"' >> /etc/X11/org.conf.d/70-synaptics.conf
@@ -223,8 +226,18 @@ do
 	fi	
 done
 
-if [ "$VM" = $yes ]; then
+if [ "$VM" =~ $yes ]; then
 	sed -i '1ixrandr --output Virtual1 --mode 1280x960' /home/$USER/.xinitrc
 fi
 
+echo "Installation complete"
+sleep 0.5
+echo "Rebooting"
+sleep 1
+echo "3"
+sleep 1
+echo "2"
+sleep 1
+echo "1"
+sleep 1
 sudo reboot
