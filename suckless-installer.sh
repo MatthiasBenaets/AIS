@@ -103,11 +103,23 @@ elif [ "$DISTRO" = 3 ]; then
 	xbps-install -Suy
 fi
 
+#Installing packages and dependencies
+if [ "$DISTRO" = 1 ]; then
+	apt-get install xorg make gcc libx11-dev libxft-dev libxinerama-dev libx11-xcb-dev libxcb-res0-dev fonts-font-awesome sxhkd git alsa-utils pulseaudio pulsemixer feh compton ranger python3-pip vim -y
+	pip3 install ueberzug
+elif [ "$DISTRO" = 2 ]; then
+	yes | pacman -S make gcc libx11 libxft libxinerama libxcb xorg-setxkbmap xorg-xrandr xorg-xsetroot ttf-font-awesome sxhkd wpa_supplicant git alsa-utils pulseaudio pulsemixer feh xcompmgr ranger ueberzug vim
+elif [ "$DISTRO" = 3 ]; then
+	xbps-install xorg make gcc pkg-config libX11-devel libXft-devel libXinerama-devel setxkbmap xsetroot font-awesome sxhkd git alsa-utils pulseaudio pulsemixer feh compton ranger ueberzug vim -y
+fi
+
 #Setting up wifi
-if [[ "$DISTRO" =~ ^(1|2)$ ]]; then
+if [[ "$DISTRO" =~ ^(1|2)$ ]] && [[ "$WIFI" =~ $yes ]]; then
 	ip a
 	read -p 'What is your wifi-card name (case sensitive): ' CARD
 	echo "auto $CARD" >> /etc/network/interfaces
+	mkdir /etc/network
+	touch /etc/network/interfaces
 	echo "allow-hotplug $CARD" >> /etc/network/interfaces
 	echo "iface $CARD inet dhcp" >> /etc/network/interfaces
 	echo 'wpa-conf /etc/wpa_supplicant/wpa_supplicant.conf' >> /etc/network/interfaces
@@ -123,16 +135,6 @@ if [[ "$DISTRO" =~ ^(1|2)$ ]]; then
 	echo 'pairwise=CCMP' >> /etc/wpa_supplicant/wpa_supplicant.conf
 	echo 'auth_alg=OPEN' >> /etc/wpa_supplicant/wpa_supplicant.conf
 	echo '}' >> /etc/wpa_supplicant/wpa_supplicant.conf
-fi
-
-#Installing packages and dependencies
-if [ "$DISTRO" = 1 ]; then
-	apt-get install xorg make gcc libx11-dev libxft-dev libxinerama-dev libx11-xcb-dev libxcb-res0-dev fonts-font-awesome sxhkd git alsa-utils pulseaudio pulsemixer feh compton ranger python3-pip vim -y
-	pip3 install ueberzug
-elif [ "$DISTRO" = 2 ]; then
-	yes | pacman -S xorg make gcc libx11 libxft libxinerama libxcb xorg-setxkbmap xorg-xrandr xorg-xsetroot ttf-font-awesome sxhkd git alsa-utils pulseaudio pulsemixer feh xcompmgr ranger ueberzug vim
-elif [ "$DISTRO" = 3 ]; then
-	xbps-install xorg make gcc pkg-config libX11-devel libXft-devel libXinerama-devel setxkbmap xsetroot font-awesome sxhkd git alsa-utils pulseaudio pulsemixer feh compton ranger ueberzug vim -y
 fi
 
 #Cloning github repos and installation
@@ -174,11 +176,11 @@ if [ "$DISTRO" = 1 ]; then
 	sed -i '60d' /home/$USER/.bashrc
 	sed -i "60i$prompt" /home/$USER/.bashrc
 elif [ "$DISTRO" = 2 ]; then
-	sed -i '7d' /home/$USER/.bashrc
-	sed -i "7i$prompt" /home/$USER/.bashrc
-elif [ "$DISTRO" = 3 ]; then
 	sed -i '9d' /home/$USER/.bashrc
 	sed -i "9i$prompt" /home/$USER/.bashrc
+elif [ "$DISTRO" = 3 ]; then
+	sed -i '7d' /home/$USER/.bashrc
+	sed -i "7i$prompt" /home/$USER/.bashrc
 fi
 
 if [ "$DISTRO" = 2 ]; then
@@ -199,15 +201,15 @@ if [[ "$BLT" =~ $yes ]]; then
 fi
 #Trackpad
 if [[ "$PAD" =~ $yes ]]; then
-	mkdir /etc/X11/org.conf.d
-	touch /etc/X11/org.conf.d/70-synaptics.conf
-	echo 'Section "InputClass"' >> /etc/X11/org.conf.d/70-synaptics.conf
-	echo 'Identifier "touchpad"' >> /etc/X11/org.conf.d/70-synaptics.conf
-	echo 'Driver "synaptics"' >> /etc/X11/org.conf.d/70-synaptics.conf
-	echo 'MatchIsTouchpad "on"' >> /etc/X11/org.conf.d/70-synaptics.conf
-	echo 'Option "Tapping" "on"' >> /etc/X11/org.conf.d/70-synaptics.conf
-	echo 'Option "NaturalScrolling" "on"' >> /etc/X11/org.conf.d/70-synaptics.conf
-	echo 'EndSection' >> /etc/X11/org.conf.d/70-synaptics.conf
+	mkdir /etc/X11/xorg.conf.d
+	touch /etc/X11/xorg.conf.d/70-synaptics.conf
+	echo 'Section "InputClass"' >> /etc/X11/xorg.conf.d/70-synaptics.conf
+	echo 'Identifier "touchpad"' >> /etc/X11/xorg.conf.d/70-synaptics.conf
+	echo 'Driver "synaptics"' >> /etc/X11/xorg.conf.d/70-synaptics.conf
+	echo 'MatchIsTouchpad "on"' >> /etc/X11/xorg.conf.d/70-synaptics.conf
+	echo 'Option "Tapping" "on"' >> /etc/X11/xorg.conf.d/70-synaptics.conf
+	echo 'Option "NaturalScrolling" "on"' >> /etc/X11/xorg.conf.d/70-synaptics.conf
+	echo 'EndSection' >> /etc/X11/xorg.conf.d/70-synaptics.conf
  
 fi
 
