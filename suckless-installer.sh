@@ -17,7 +17,8 @@
 #VARIABLES
 yes="^(y|yes|Y|Yes|YES|"")$"
 no="^(n|no|N|No|NO)$"
-prompt="PS1='\\\[\\\033[01;32m\\\]\\\u\\\[\\\033[00m\\\]\\\[\\\033[00;37m\\\]@\\\[\\\033[00m\\\]\\\[\\\033[01;32m\\\]\\\h\\\[\\\033[00m\\\]:\\\[\\\033[00;36m\\\]\\\w\\\[\\\033[00m\\\]\\\$ '"
+prompt="PS1='\\[\\033[01;32m\\]\\u\\[\\033[00m\\]\\[\\033[00;37m\\]@\\[\\033[00m\\]\\[\\033[01;32m\\]\\h\\[\\033[00m\\]:\\[\\033[00;36m\\]\\w\\[\\033[00m\\]\\\$ '"
+prompt2="PS1='\\\[\\\033[01;32m\\\]\\\u\\\[\\\033[00m\\\]\\\[\\\033[00;37m\\\]@\\\[\\\033[00m\\\]\\\[\\\033[01;32m\\\]\\\h\\\[\\\033[00m\\\]:\\\[\\\033[00;36m\\\]\\\w\\\[\\\033[00m\\\]\\\$ '"
 VALID=false
 DISTRO=null
 USER=null
@@ -119,7 +120,7 @@ elif [ "$DISTRO" = 3 ]; then
 fi
 
 #SETTING UP WIFI
-if [[ "$DISTRO" =~ ^(1|2)$ ]] && [[ "$WIFI" =~ $yes ]]; then
+if [[ "$WIFI" =~ $yes ]]; then
 	ip a
 	read -p 'What is your wifi-card name (case sensitive): ' CARD
 	echo "auto $CARD" >> /etc/network/interfaces
@@ -148,7 +149,6 @@ git clone https://www.github.com/MatthiasBenaets/dwm /home/$USER/.dwm
 git clone https://www.github.com/MatthiasBenaets/st /home/$USER/.st
 git clone https://www.github.com/MatthiasBenaets/dotfiles /home/$USER/.dotfiles
 git clone https://git.suckless.org/dmenu /home/$USER/.dmenu
-
 ##Installing repositories
 cd /home/$USER/.dwm
 make clean install
@@ -160,19 +160,15 @@ make clean install
 #STARTUP FILES AND DOTFILES
 ##Autostart Xserver on login
 echo 'startx' >> /etc/profile
-
 ##Wallpaper
 mkdir /home/$USER/Pictures
 cp /home/$USER/.dwm/resc/wall.jpg /home/$USER/Pictures
-
 ##Installing custom font
 cp -r /home/$USER/.dwm/resc/sourcecodepro /usr/share/fonts/opentype/
 fc-cache -fv
-
 ##Copying dotfiles
 cp -f /home/$USER/.dotfiles/.xinitrc /home/$USER
 cp -r /home/$USER/.dotfiles/.config /home/$USER
-
 ##Edit autostart show available updates
 sed -i '9d' /home/$USER/.dwm/autostart.sh
 sed -i '9d' /home/$USER/.dwm/autostart.sh
@@ -186,11 +182,10 @@ elif [ "$DISTRO" = 3 ]; then
 	sed -i '9iUPGRADE=$(xbps-install -Suvn | wc -l)' /home/$USER/.dwm/autostart.sh
 	sed -i '10iecho " $((UPGRADE))"' /home/$USER/.dwm/autostart.sh
 fi
-
 ##Edit .bashrc PS1
 if [ "$DISTRO" = 1 ]; then
 	sed -i '60d' /home/$USER/.bashrc
-	sed -i "60i$prompt" /home/$USER/.bashrc
+	sed -i "60i$prompt2" /home/$USER/.bashrc
 elif [ "$DISTRO" = 2 ]; then
 	sed -i '9d' /home/$USER/.bashrc
 	echo "$prompt" >> /home/$USER/.bashrc
@@ -198,7 +193,6 @@ elif [ "$DISTRO" = 3 ]; then
 	sed -i '7d' /home/$USER/.bashrc
 	echo "$prompt" >> /home/$USER/.bashrc
 fi
-
 ##Compositor Pacman
 if [ "$DISTRO" = 2 ]; then
 	sed -i '4d' /home/$USER/.xinitrc
