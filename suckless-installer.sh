@@ -157,8 +157,8 @@ fc-cache -fv
 cp -f /home/$USER/.dotfiles/.xinitrc /home/$USER
 cp -r /home/$USER/.dotfiles/.config /home/$USER
 
-sed '9d' /home/$USER/.dwm/autostart.sh
-sed '9d' /home/$USER/.dwm/autostart.sh
+sed -i '9d' /home/$USER/.dwm/autostart.sh
+sed -i '9d' /home/$USER/.dwm/autostart.sh
 if [ "$DISTRO" = 1 ]; then
 	sed -i '9iUPGRADE=$(apt list --upgradeable | wc -l)' /home/$USER/.dwm/autostart.sh
 	sed -i '10iecho " $((UPGRADE-1))"' /home/$USER/.dwm/autostart.sh
@@ -171,23 +171,23 @@ elif [ "$DISTRO" = 3 ]; then
 fi
 
 if [ "$DISTRO" = 1 ]; then
-	sed '60d' /home/$USER/.bashrc
+	sed -i '60d' /home/$USER/.bashrc
 	sed -i "60i$prompt" /home/$USER/.bashrc
 elif [ "$DISTRO" = 2 ]; then
-	sed '7d' /home/$USER/.bashrc
+	sed -i '7d' /home/$USER/.bashrc
 	sed -i "7i$prompt" /home/$USER/.bashrc
 elif [ "$DISTRO" = 3 ]; then
-	sed '9d' /home/$USER/.bashrc
+	sed -i '9d' /home/$USER/.bashrc
 	sed -i "9i$prompt" /home/$USER/.bashrc
 fi
 
 if [ "$DISTRO" = 2 ]; then
-	sed '4d' /home/$USER/.xinitrc
+	sed -i '4d' /home/$USER/.xinitrc
 	sed -i '4ixcompmgr &' /home/$USER/.xinitrc
 fi
 
 #Bluetooth
-if [ "$BLT" =~ $yes ]; then
+if [[ "$BLT" =~ $yes ]]; then
 	if [ "$DISTRO" = 1 ]; then
 		apt-get install bluez blueman -y
 	elif [ "$DISTRO" = 2 ]; then
@@ -198,7 +198,7 @@ if [ "$BLT" =~ $yes ]; then
 	sed -i '67iload-module module-switch-on-connect' /etc/pulse/default.pa
 fi
 #Trackpad
-if [ "$PAD" =~ $yes ]; then
+if [[ "$PAD" =~ $yes ]]; then
 	mkdir /etc/X11/org.conf.d
 	touch /etc/X11/org.conf.d/70-synaptics.conf
 	echo 'Section "InputClass"' >> /etc/X11/org.conf.d/70-synaptics.conf
@@ -226,7 +226,7 @@ do
 	fi	
 done
 
-if [ "$VM" =~ $yes ]; then
+if [[ "$VM" =~ $yes ]]; then
 	sed -i '1ixrandr --output Virtual1 --mode 1280x960' /home/$USER/.xinitrc
 fi
 
