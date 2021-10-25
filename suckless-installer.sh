@@ -17,8 +17,8 @@
 #VARIABLES
 yes="^(y|yes|Y|Yes|YES|"")$"
 no="^(n|no|N|No|NO)$"
-prompt="PS1='\\[\\033[01;32m\\]\\u\\[\\033[00m\\]\\[\\033[00;37m\\]@\\[\\033[00m\\]\\[\\033[01;32m\\]\\h\\[\\033[00m\\]:\\[\\033[00;36m\\]\\w\\[\\033[00m\\]\\\$ '"
-prompt2="PS1='\\\[\\\033[01;32m\\\]\\\u\\\[\\\033[00m\\\]\\\[\\\033[00;37m\\\]@\\\[\\\033[00m\\\]\\\[\\\033[01;32m\\\]\\\h\\\[\\\033[00m\\\]:\\\[\\\033[00;36m\\\]\\\w\\\[\\\033[00m\\\]\\\$ '"
+prompt="PS1='\\[\\033[00;34m\\]\\u\\[\\033[00m\\]\\[\\033[00;37m\\]@\\[\\033[00m\\]\\[\\033[00;34m\\]\\h\\[\\033[00m\\]:\\[\\033[00;36m\\]\\w\\[\\033[00m\\]\\\$ '"
+prompt2="PS1='\\\[\\\033[00;34m\\\]\\\u\\\[\\\033[00m\\\]\\\[\\\033[00;37m\\\]@\\\[\\\033[00m\\\]\\\[\\\033[00;34m\\\]\\\h\\\[\\\033[00m\\\]:\\\[\\\033[00;36m\\\]\\\w\\\[\\\033[00m\\\]\\\$ '"
 VALID=false
 DISTRO=null
 USER=null
@@ -54,7 +54,7 @@ done
 ##Username
 read -p $'What is your username (case sensitive): ' USER
 ##Wifi
-read -p $'Do you need wifi? [Y/n]: ' WIFI
+read -p $'Do you need wifi? No need if NetworkManager is installed [Y/n]: ' WIFI
 VALID=false
 until [[ "$VALID" = true ]]
 do	
@@ -114,7 +114,7 @@ if [ "$DISTRO" = 1 ]; then
 	apt-get install xorg make gcc libx11-dev libxft-dev libxinerama-dev libx11-xcb-dev libxcb-res0-dev fonts-font-awesome sxhkd git alsa-utils pulseaudio pulsemixer feh compton ranger python3-pip vim -y
 	pip3 install ueberzug
 elif [ "$DISTRO" = 2 ]; then
-	yes | pacman -S make gcc libx11 libxft libxinerama libxcb xorg-setxkbmap xorg-xrandr xorg-xsetroot ttf-font-awesome sxhkd wpa_supplicant git alsa-utils pulseaudio pulsemixer feh xcompmgr ranger ueberzug vim
+	yes | pacman -S make gcc libx11 libxft libxinerama libxcb xorg-setxkbmap xorg-xrandr xorg-xsetroot ttf-font-awesome sxhkd alsa-utils pulseaudio pulsemixer feh xcompmgr ranger ueberzug vim
 elif [ "$DISTRO" = 3 ]; then
 	xbps-install xorg make gcc pkg-config libX11-devel libXft-devel libXinerama-devel setxkbmap xsetroot font-awesome sxhkd git alsa-utils pulseaudio pulsemixer feh compton ranger ueberzug vim -y
 fi
