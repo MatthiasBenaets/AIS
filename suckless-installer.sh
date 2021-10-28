@@ -123,24 +123,24 @@ fi
 if [[ "$WIFI" =~ $yes ]]; then
 	ip a
 	read -p 'What is your wifi-card name (case sensitive): ' CARD
-	sudo echo "auto $CARD" >> /etc/network/interfaces
+	sudo bash -c 'echo "auto $CARD" >> /etc/network/interfaces'
 	sudo mkdir /etc/network
 	sudo touch /etc/network/interfaces
-	sudo echo "allow-hotplug $CARD" >> /etc/network/interfaces
-	sudo echo "iface $CARD inet dhcp" >> /etc/network/interfaces
-	sudo echo 'wpa-conf /etc/wpa_supplicant/wpa_supplicant.conf' >> /etc/network/interfaces
-	sudo echo 'iface default inet dhcp' >> /etc/network/interfaces
+	sudo bash -c 'echo "allow-hotplug $CARD" >> /etc/network/interfaces'
+	sudo bash -c 'echo "iface $CARD inet dhcp" >> /etc/network/interfaces'
+	sudo bash -c 'echo "wpa-conf /etc/wpa_supplicant/wpa_supplicant.conf" >> /etc/network/interfaces'
+	sudo bash -c 'echo "iface default inet dhcp" >> /etc/network/interfaces'
 
 	sudo mkdir /etc/wpa_supplicant
 	sudo touch /etc/wpa_supplicant/wpa_supplicant.conf
-	sudo echo 'network={' >> /etc/wpa_supplicant/wpa_supplicant.conf
-	sudo echo "ssid="$SSID"" >> /etc/wpa_supplicant/wpa_supplicant.conf
-	sudo echo "psk="$PASS"" >> /etc/wpa_supplicant/wpa_supplicant.conf
-	sudo echo 'proto=RSN' >> /etc/wpa_supplicant/wpa_supplicant.conf
-	sudo echo 'key_mgmt=WPA-PSK' >> /etc/wpa_supplicant/wpa_supplicant.conf
-	sudo echo 'pairwise=CCMP' >> /etc/wpa_supplicant/wpa_supplicant.conf
-	sudo echo 'auth_alg=OPEN' >> /etc/wpa_supplicant/wpa_supplicant.conf
-	sudo echo '}' >> /etc/wpa_supplicant/wpa_supplicant.conf
+	sudo bash -c 'echo "network={" >> /etc/wpa_supplicant/wpa_supplicant.conf'
+	sudo bash -c 'echo "ssid=$SSID" >> /etc/wpa_supplicant/wpa_supplicant.conf'
+	sudo bash -c 'echo "psk=$PASS" >> /etc/wpa_supplicant/wpa_supplicant.conf'
+	sudo bash -c 'echo "proto=RSN" >> /etc/wpa_supplicant/wpa_supplicant.conf'
+	sudo bash -c 'echo "key_mgmt=WPA-PSK" >> /etc/wpa_supplicant/wpa_supplicant.conf'
+	sudo bash -c 'echo "pairwise=CCMP" >> /etc/wpa_supplicant/wpa_supplicant.conf'
+	sudo bash -c 'echo "auth_alg=OPEN" >> /etc/wpa_supplicant/wpa_supplicant.conf'
+	sudo bash -c 'echo "}" >> /etc/wpa_supplicant/wpa_supplicant.conf'
 fi
 
 #CLONING SUCKLESS SOFTWARE
@@ -159,7 +159,7 @@ sudo make clean install
 
 #STARTUP FILES AND DOTFILES
 ##Autostart Xserver on login
-sudo echo 'startx' >> /etc/profile
+sudo bash -c 'echo "startx" >> /etc/profile'
 ##Wallpaper
 mkdir /home/$USER/Pictures
 cp /home/$USER/.dwm/resc/wall.jpg /home/$USER/Pictures
@@ -208,19 +208,19 @@ if [[ "$BLT" =~ $yes ]]; then
 	elif [ "$DISTRO" = 3 ]; then
 		sudo xbps-install bluez blueman -y
 	fi
-	sudo sed -i '67iload-module module-switch-on-connect' /etc/pulse/default.pa
+	sudo bash -c 'sed -i '67iload-module module-switch-on-connect' /etc/pulse/default.pa'
 fi
 #TRACKPAD
 if [[ "$PAD" =~ $yes ]]; then
 	sudo mkdir /etc/X11/xorg.conf.d
 	sudo touch /etc/X11/xorg.conf.d/70-synaptics.conf
-	sudo echo 'Section "InputClass"' >> /etc/X11/xorg.conf.d/70-synaptics.conf
-	sudo echo 'Identifier "touchpad"' >> /etc/X11/xorg.conf.d/70-synaptics.conf
-	sudo echo 'Driver "synaptics"' >> /etc/X11/xorg.conf.d/70-synaptics.conf
-	sudo echo 'MatchIsTouchpad "on"' >> /etc/X11/xorg.conf.d/70-synaptics.conf
-	sudo echo 'Option "Tapping" "on"' >> /etc/X11/xorg.conf.d/70-synaptics.conf
-	sudo echo 'Option "NaturalScrolling" "on"' >> /etc/X11/xorg.conf.d/70-synaptics.conf
-	sudo echo 'EndSection' >> /etc/X11/xorg.conf.d/70-synaptics.conf
+	sudo bash -c 'echo 'Section "InputClass"' >> /etc/X11/xorg.conf.d/70-synaptics.conf'
+	sudo bash -c 'echo 'Identifier "touchpad"' >> /etc/X11/xorg.conf.d/70-synaptics.conf'
+	sudo bash -c 'echo 'Driver "synaptics"' >> /etc/X11/xorg.conf.d/70-synaptics.conf'
+	sudo bash -c 'echo 'MatchIsTouchpad "on"' >> /etc/X11/xorg.conf.d/70-synaptics.conf'
+	sudo bash -c 'echo 'Option "Tapping" "on"' >> /etc/X11/xorg.conf.d/70-synaptics.conf'
+	sudo bash -c 'echo 'Option "NaturalScrolling" "on"' >> /etc/X11/xorg.conf.d/70-synaptics.conf'
+	sudo bash -c 'echo 'EndSection' >> /etc/X11/xorg.conf.d/70-synaptics.conf'
  
 fi
 
