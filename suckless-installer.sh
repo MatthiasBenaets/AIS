@@ -9,7 +9,7 @@
 # - give user root priviliges: /etc/sudoers -> $USER ALL=(ALL:ALL) ALL   #
 # Run script in home directory with sudo				 #
 # - chmod +x suckless-installer.sh					 #
-# - sudo ./suckless-installer.sh					 #
+# - ./suckless-installer.sh						 #
 # After installation, choose correct keyboard layout if needed		 #
 # - vim /home/$USER/.xinitrc --> setxkbmap $LAYOUT			 #
 ##########################################################################
@@ -101,46 +101,46 @@ done
 
 #BASE UPDATE
 if [ "$DISTRO" = 1 ]; then
-	apt update -y
-	apt upgrade -y
+	sudo apt update -y
+	sudo apt upgrade -y
 elif [ "$DISTRO" = 2 ]; then
-	yes | pacman -Syu
+	yes | sudo pacman -Syu
 elif [ "$DISTRO" = 3 ]; then
-	xbps-install -Suy
+	sudo xbps-install -Suy
 fi
 
 #INSTALL PACKAGES AND DEPENDENCIES
 if [ "$DISTRO" = 1 ]; then
-	apt-get install xorg make gcc libx11-dev libxft-dev libxinerama-dev libx11-xcb-dev libxcb-res0-dev fonts-font-awesome sxhkd git alsa-utils pulseaudio pulsemixer feh compton ranger python3-pip vim -y
+	sudo apt-get install xorg make gcc libx11-dev libxft-dev libxinerama-dev libx11-xcb-dev libxcb-res0-dev fonts-font-awesome sxhkd git alsa-utils pulseaudio pulsemixer feh compton ranger python3-pip vim -y
 	pip3 install ueberzug
 elif [ "$DISTRO" = 2 ]; then
-	yes | pacman -S make gcc libx11 libxft libxinerama libxcb xorg-setxkbmap xorg-xrandr xorg-xsetroot ttf-font-awesome sxhkd git alsa-utils pulseaudio pulsemixer feh xcompmgr ranger ueberzug vim
+	yes | sudo pacman -S make gcc libx11 libxft libxinerama libxcb xorg-setxkbmap xorg-xrandr xorg-xsetroot ttf-font-awesome sxhkd git alsa-utils pulseaudio pulsemixer feh xcompmgr ranger ueberzug vim
 elif [ "$DISTRO" = 3 ]; then
-	xbps-install xorg make gcc pkg-config libX11-devel libXft-devel libXinerama-devel setxkbmap xsetroot font-awesome sxhkd git alsa-utils pulseaudio pulsemixer feh compton ranger ueberzug vim -y
+	sudo xbps-install xorg make gcc pkg-config libX11-devel libXft-devel libXinerama-devel setxkbmap xsetroot font-awesome sxhkd git alsa-utils pulseaudio pulsemixer feh compton ranger ueberzug vim -y
 fi
 
 #SETTING UP WIFI
 if [[ "$WIFI" =~ $yes ]]; then
 	ip a
 	read -p 'What is your wifi-card name (case sensitive): ' CARD
-	echo "auto $CARD" >> /etc/network/interfaces
-	mkdir /etc/network
-	touch /etc/network/interfaces
-	echo "allow-hotplug $CARD" >> /etc/network/interfaces
-	echo "iface $CARD inet dhcp" >> /etc/network/interfaces
-	echo 'wpa-conf /etc/wpa_supplicant/wpa_supplicant.conf' >> /etc/network/interfaces
-	echo 'iface default inet dhcp' >> /etc/network/interfaces
+	sudo echo "auto $CARD" >> /etc/network/interfaces
+	sudo mkdir /etc/network
+	sudo touch /etc/network/interfaces
+	sudo echo "allow-hotplug $CARD" >> /etc/network/interfaces
+	sudo echo "iface $CARD inet dhcp" >> /etc/network/interfaces
+	sudo echo 'wpa-conf /etc/wpa_supplicant/wpa_supplicant.conf' >> /etc/network/interfaces
+	sudo echo 'iface default inet dhcp' >> /etc/network/interfaces
 
-	mkdir /etc/wpa_supplicant
-	touch /etc/wpa_supplicant/wpa_supplicant.conf
-	echo 'network={' >> /etc/wpa_supplicant/wpa_supplicant.conf
-	echo "ssid="$SSID"" >> /etc/wpa_supplicant/wpa_supplicant.conf
-	echo "psk="$PASS"" >> /etc/wpa_supplicant/wpa_supplicant.conf
-	echo 'proto=RSN' >> /etc/wpa_supplicant/wpa_supplicant.conf
-	echo 'key_mgmt=WPA-PSK' >> /etc/wpa_supplicant/wpa_supplicant.conf
-	echo 'pairwise=CCMP' >> /etc/wpa_supplicant/wpa_supplicant.conf
-	echo 'auth_alg=OPEN' >> /etc/wpa_supplicant/wpa_supplicant.conf
-	echo '}' >> /etc/wpa_supplicant/wpa_supplicant.conf
+	sudo mkdir /etc/wpa_supplicant
+	sudo touch /etc/wpa_supplicant/wpa_supplicant.conf
+	sudo echo 'network={' >> /etc/wpa_supplicant/wpa_supplicant.conf
+	sudo echo "ssid="$SSID"" >> /etc/wpa_supplicant/wpa_supplicant.conf
+	sudo echo "psk="$PASS"" >> /etc/wpa_supplicant/wpa_supplicant.conf
+	sudo echo 'proto=RSN' >> /etc/wpa_supplicant/wpa_supplicant.conf
+	sudo echo 'key_mgmt=WPA-PSK' >> /etc/wpa_supplicant/wpa_supplicant.conf
+	sudo echo 'pairwise=CCMP' >> /etc/wpa_supplicant/wpa_supplicant.conf
+	sudo echo 'auth_alg=OPEN' >> /etc/wpa_supplicant/wpa_supplicant.conf
+	sudo echo '}' >> /etc/wpa_supplicant/wpa_supplicant.conf
 fi
 
 #CLONING SUCKLESS SOFTWARE
@@ -151,20 +151,20 @@ git clone https://www.github.com/MatthiasBenaets/dotfiles /home/$USER/.dotfiles
 git clone https://git.suckless.org/dmenu /home/$USER/.dmenu
 ##Installing repositories
 cd /home/$USER/.dwm
-make clean install
+sudo make clean install
 cd /home/$USER/.st
-make clean install
+sudo make clean install
 cd /home/$USER/.dmenu
-make clean install
+sudo make clean install
 
 #STARTUP FILES AND DOTFILES
 ##Autostart Xserver on login
-echo 'startx' >> /etc/profile
+sudo echo 'startx' >> /etc/profile
 ##Wallpaper
 mkdir /home/$USER/Pictures
 cp /home/$USER/.dwm/resc/wall.jpg /home/$USER/Pictures
 ##Installing custom font
-cp -r /home/$USER/.dwm/resc/sourcecodepro /usr/share/fonts/opentype/
+sudo cp -r /home/$USER/.dwm/resc/sourcecodepro /usr/share/fonts/opentype/
 fc-cache -fv
 ##Copying dotfiles
 cp -f /home/$USER/.dotfiles/.xinitrc /home/$USER
@@ -202,25 +202,25 @@ fi
 #BLUETOOTH
 if [[ "$BLT" =~ $yes ]]; then
 	if [ "$DISTRO" = 1 ]; then
-		apt-get install bluez blueman -y
+		sudo apt-get install bluez blueman -y
 	elif [ "$DISTRO" = 2 ]; then
-		yes | pacman -S bluez blueman
+		yes | sudo pacman -S bluez blueman
 	elif [ "$DISTRO" = 3 ]; then
-		xbps-install bluez blueman -y
+		sudo xbps-install bluez blueman -y
 	fi
-	sed -i '67iload-module module-switch-on-connect' /etc/pulse/default.pa
+	sudo sed -i '67iload-module module-switch-on-connect' /etc/pulse/default.pa
 fi
 #TRACKPAD
 if [[ "$PAD" =~ $yes ]]; then
-	mkdir /etc/X11/xorg.conf.d
-	touch /etc/X11/xorg.conf.d/70-synaptics.conf
-	echo 'Section "InputClass"' >> /etc/X11/xorg.conf.d/70-synaptics.conf
-	echo 'Identifier "touchpad"' >> /etc/X11/xorg.conf.d/70-synaptics.conf
-	echo 'Driver "synaptics"' >> /etc/X11/xorg.conf.d/70-synaptics.conf
-	echo 'MatchIsTouchpad "on"' >> /etc/X11/xorg.conf.d/70-synaptics.conf
-	echo 'Option "Tapping" "on"' >> /etc/X11/xorg.conf.d/70-synaptics.conf
-	echo 'Option "NaturalScrolling" "on"' >> /etc/X11/xorg.conf.d/70-synaptics.conf
-	echo 'EndSection' >> /etc/X11/xorg.conf.d/70-synaptics.conf
+	sudo mkdir /etc/X11/xorg.conf.d
+	sudo touch /etc/X11/xorg.conf.d/70-synaptics.conf
+	sudo echo 'Section "InputClass"' >> /etc/X11/xorg.conf.d/70-synaptics.conf
+	sudo echo 'Identifier "touchpad"' >> /etc/X11/xorg.conf.d/70-synaptics.conf
+	sudo echo 'Driver "synaptics"' >> /etc/X11/xorg.conf.d/70-synaptics.conf
+	sudo echo 'MatchIsTouchpad "on"' >> /etc/X11/xorg.conf.d/70-synaptics.conf
+	sudo echo 'Option "Tapping" "on"' >> /etc/X11/xorg.conf.d/70-synaptics.conf
+	sudo echo 'Option "NaturalScrolling" "on"' >> /etc/X11/xorg.conf.d/70-synaptics.conf
+	sudo echo 'EndSection' >> /etc/X11/xorg.conf.d/70-synaptics.conf
  
 fi
 
