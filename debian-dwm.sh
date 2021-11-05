@@ -44,7 +44,7 @@ apt-get install gcc libx11-dev libxft-dev libxinerama-dev libx11-xcb-dev libxcb-
 #Cloning the github repos
 git clone https://www.github.com/MatthiasBenaets/dwm /home/$user/.dwm
 git clone https://www.github.com/MatthiasBenaets/st /home/$user/.st
-git clone https://git.suckless.org/dmenu /home/$user/.dmenu
+git clone https://www.github.com/MatthiasBenaets/dmenu /home/$user/.dmenu
 git clone https://www.github.com/MatthiasBenaets/dotfiles /home/$user/.dotfiles
 
 #Install Suckless software

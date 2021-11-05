@@ -24,6 +24,7 @@ rc-update add elogind boot
 #Downloading git repo
 git clone https://www.github.com/MatthiasBenaets/dwm /home/$user/dwm
 git clone https://www.github.com/MatthiasBenaets/st /home/$user/st
+git clone https://www.github.com/MatthiasBenaets/dmenu /home/$user/dmenu
 git clone https://www.github.com/MatthiasBenaets/dotfiles /home/$user/dotfiles
 
 #Edit xinitrc
@@ -69,4 +70,5 @@ cp /user/$user/dotfiles/.local/share/dwm/autostart.sh /home/$user/.local/share/d
 #Rebuild and reboot
 emerge dwm 
 emerge st
+emerge dmenu
 sudo reboot

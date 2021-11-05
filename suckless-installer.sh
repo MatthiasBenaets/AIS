@@ -147,8 +147,8 @@ fi
 ##Cloning Github
 git clone https://www.github.com/MatthiasBenaets/dwm /home/$USER/.dwm
 git clone https://www.github.com/MatthiasBenaets/st /home/$USER/.st
+git clone https://www.github.com/MatthiasBenaets/dmenu /home/$USER/.dmenu
 git clone https://www.github.com/MatthiasBenaets/dotfiles /home/$USER/.dotfiles
-git clone https://git.suckless.org/dmenu /home/$USER/.dmenu
 ##Installing repositories
 cd /home/$USER/.dwm
 sudo make clean install
