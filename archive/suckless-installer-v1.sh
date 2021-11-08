@@ -3,7 +3,6 @@
 ##########################################################################
 #			SUCKLESS INSTALLATION SCRIPT			 #
 #									 #
-# This installer assumes you are already connected to the internet	 #
 # Make sure sudo & wget is installed					 #
 # - apt install sudo wget / pacman -S sudo wget / xbps-install sudo wget #
 #   - If unable, update/upgrade package manager (see #BASE UPDATE)	 #
@@ -30,7 +29,6 @@ VM=null
 CARD=null
 BLT=null
 PAD=null
-LAYOUT=null
 
 #CHOOSE DISTRIBUTION TO INSTALL SUCKLESS DESKTOP
 read -rep $'Step 1\nWhat package manager does your distro use?\n[1]-Apt\t\t(Debian)\n[2]-Pacman\t( Arch )\n[3]-XBPS\t( Void )\nWM: ' DISTRO
@@ -56,13 +54,16 @@ done
 ##Username
 read -p $'What is your username (case sensitive): ' USER
 ##Wifi
-read -p $'Do you need NetworkManager for wifi? [Y/n]: ' WIFI
+read -p $'Do you need wifi? No need if NetworkManager is installed [Y/n]: ' WIFI
 VALID=false
 until [[ "$VALID" = true ]]
 do	
 	if [[ "$WIFI" =~ $yes ]]; then
+		read -p $'SSID: ' SSID
+		read -p $'Password: ' PASS
 		VALID=true
 	elif [[ "$WIFI" =~ $no ]]; then
+		echo "Excluding wifi setup"
 		VALID=true
 	else 
 		echo "Non-valid input"
@@ -120,30 +121,36 @@ fi
 
 #SETTING UP WIFI
 if [[ "$WIFI" =~ $yes ]]; then
-	if [ "$DISTRO" = 1 ]; then 
-		sudo systemctl enable NetworkManager.service
-	elif [ "$DISTRO" = 2 ]; then
-		yes | sudo pacman -S networkmanager -y
-		sudo systemctl enable NetworkManager.service
-	elif [ "$DISTRO" = 2 ]; then
-		sudo xbps-install NetworkManager -y
-		sudo sv down dhcpcd
-		sudo rm /var/service/dhcpcd
-		sudo ln -s /etc/sv/NetworkManager /var/service/
-	fi
+	ip a
+	read -p 'What is your wifi-card name (case sensitive): ' CARD
+	sudo bash -c 'echo "auto $CARD" >> /etc/network/interfaces'
+	sudo mkdir /etc/network
+	sudo touch /etc/network/interfaces
+	sudo bash -c 'echo "allow-hotplug $CARD" >> /etc/network/interfaces'
+	sudo bash -c 'echo "iface $CARD inet dhcp" >> /etc/network/interfaces'
+	sudo bash -c 'echo "wpa-conf /etc/wpa_supplicant/wpa_supplicant.conf" >> /etc/network/interfaces'
+	sudo bash -c 'echo "iface default inet dhcp" >> /etc/network/interfaces'
+
+	sudo mkdir /etc/wpa_supplicant
+	sudo touch /etc/wpa_supplicant/wpa_supplicant.conf
+	sudo bash -c 'echo "network={" >> /etc/wpa_supplicant/wpa_supplicant.conf'
+	sudo bash -c 'echo "ssid=$SSID" >> /etc/wpa_supplicant/wpa_supplicant.conf'
+	sudo bash -c 'echo "psk=$PASS" >> /etc/wpa_supplicant/wpa_supplicant.conf'
+	sudo bash -c 'echo "proto=RSN" >> /etc/wpa_supplicant/wpa_supplicant.conf'
+	sudo bash -c 'echo "key_mgmt=WPA-PSK" >> /etc/wpa_supplicant/wpa_supplicant.conf'
+	sudo bash -c 'echo "pairwise=CCMP" >> /etc/wpa_supplicant/wpa_supplicant.conf'
+	sudo bash -c 'echo "auth_alg=OPEN" >> /etc/wpa_supplicant/wpa_supplicant.conf'
+	sudo bash -c 'echo "}" >> /etc/wpa_supplicant/wpa_supplicant.conf'
 fi
 
 #CLONING SUCKLESS SOFTWARE
 ##Cloning Github
 git clone https://www.github.com/MatthiasBenaets/dwm /home/$USER/.dwm
-git clone https://www.github.com/MatthiasBenaets/dwmblocks /home/$USER/.dwmblocks
 git clone https://www.github.com/MatthiasBenaets/st /home/$USER/.st
 git clone https://www.github.com/MatthiasBenaets/dmenu /home/$USER/.dmenu
 git clone https://www.github.com/MatthiasBenaets/dotfiles /home/$USER/.dotfiles
 ##Installing repositories
 cd /home/$USER/.dwm
-sudo make clean install
-cd /home/$USER/.dwmblocks
 sudo make clean install
 cd /home/$USER/.st
 sudo make clean install
@@ -202,36 +209,18 @@ if [[ "$BLT" =~ $yes ]]; then
 		sudo xbps-install bluez blueman -y
 	fi
 	sudo bash -c 'sed -i '67iload-module module-switch-on-connect' /etc/pulse/default.pa'
-	sudo bash -c 'sed -i '250d' /etc/bluetooth/main.conf'
-	sudo bash -c 'sed -i '250iAutoEnable=true' /etc/bluetooth/main.conf'
-
-	if [ "$DISTRO" = 1 ] || [ "$DISTRO" = 2 ]; then
-		sudo systemctl enable bluetooth.service
-	elif [ "$DISTRO" = 3 ]; then
-		sudo ln -s /etc/sv/bluetoothd /var/service/
-		sudo ln -s /etc/sv/dbus /var/service/
-	fi
-	
-	blueman-applet
 fi
 
 #TRACKPAD
 if [[ "$PAD" =~ $yes ]]; then
-	if [ "$DISTRO" = 1 ]; then
-		sudo apt-get install libinput-bin -y
-	elif [ "$DISTRO" = 2 ]; then
-		yes | sudo apt-get install libinput
-	elif [ "$DISTRO" = 3 ]; then
-		sudo xbps-install libinput -y
-	fi
-
 	sudo mkdir /etc/X11/xorg.conf.d
-	sudo touch /etc/X11/xorg.conf.d/30-touchpad.conf
+	sudo touch /etc/X11/xorg.conf.d/70-synaptics.conf
 	sudo bash -c 'echo "Section "InputClass"" >> /etc/X11/xorg.conf.d/70-synaptics.conf'
-	sudo bash -c 'echo "Identifier "devname"" >> /etc/X11/xorg.conf.d/70-synaptics.conf'
-	sudo bash -c 'echo "Driver "libinput"" >> /etc/X11/xorg.conf.d/70-synaptics.conf'
+	sudo bash -c 'echo "Identifier "touchpad"" >> /etc/X11/xorg.conf.d/70-synaptics.conf'
+	sudo bash -c 'echo "Driver "synaptics"" >> /etc/X11/xorg.conf.d/70-synaptics.conf'
+	sudo bash -c 'echo "MatchIsTouchpad "on"" >> /etc/X11/xorg.conf.d/70-synaptics.conf'
 	sudo bash -c 'echo "Option "Tapping" "on"" >> /etc/X11/xorg.conf.d/70-synaptics.conf'
-	sudo bash -c 'echo "Option "NaturalScrolling" "true"" >> /etc/X11/xorg.conf.d/70-synaptics.conf'
+	sudo bash -c 'echo "Option "NaturalScrolling" "on"" >> /etc/X11/xorg.conf.d/70-synaptics.conf'
 	sudo bash -c 'echo "EndSection" >> /etc/X11/xorg.conf.d/70-synaptics.conf'
  
 fi
@@ -254,14 +243,9 @@ done
 if [[ "$VM" =~ $yes ]]; then
 	sed -i '1ixrandr --output Virtual1 --mode 1280x960' /home/$USER/.xinitrc
 fi
-
-#KEYBOARD LAYOUT
-read -p $'What keyboard layout do you what to use? Give correct xkb_layout: ' LAYOUT
-sed -i "4isetxkbmap $LAYOUT" /home/$USER/.xinitrc
-
 #DONE
 echo "Installation complete"
-sleep 1
+sleep 0.5
 echo "Rebooting"
 sleep 1
 echo "3"
