@@ -121,9 +121,10 @@ fi
 #SETTING UP WIFI
 if [[ "$WIFI" =~ $yes ]]; then
 	if [ "$DISTRO" = 1 ]; then 
+		sudo apt-get install network-manager -y
 		sudo systemctl enable NetworkManager.service
 	elif [ "$DISTRO" = 2 ]; then
-		yes | sudo pacman -S networkmanager -y
+		yes | sudo pacman -S networkmanager
 		sudo systemctl enable NetworkManager.service
 	elif [ "$DISTRO" = 2 ]; then
 		sudo xbps-install NetworkManager -y
@@ -195,11 +196,11 @@ fi
 #BLUETOOTH
 if [[ "$BLT" =~ $yes ]]; then
 	if [ "$DISTRO" = 1 ]; then
-		sudo apt-get install bluez blueman -y
+		sudo apt-get install bluez blueman pulseaudio-module-bluetooth -y
 	elif [ "$DISTRO" = 2 ]; then
-		yes | sudo pacman -S bluez bluez-utils blueman
+		yes | sudo pacman -S bluez bluez-utils blueman pulseaudio-bluetooth
 	elif [ "$DISTRO" = 3 ]; then
-		sudo xbps-install bluez blueman -y
+		sudo xbps-install bluez blueman bluez-alsa -y
 	fi
 	sudo bash -c 'sed -i '67iload-module module-switch-on-connect' /etc/pulse/default.pa'
 	sudo bash -c 'sed -i '250d' /etc/bluetooth/main.conf'
@@ -227,12 +228,12 @@ if [[ "$PAD" =~ $yes ]]; then
 
 	sudo mkdir /etc/X11/xorg.conf.d
 	sudo touch /etc/X11/xorg.conf.d/30-touchpad.conf
-	sudo bash -c 'echo "Section "InputClass"" >> /etc/X11/xorg.conf.d/70-synaptics.conf'
-	sudo bash -c 'echo "Identifier "devname"" >> /etc/X11/xorg.conf.d/70-synaptics.conf'
-	sudo bash -c 'echo "Driver "libinput"" >> /etc/X11/xorg.conf.d/70-synaptics.conf'
-	sudo bash -c 'echo "Option "Tapping" "on"" >> /etc/X11/xorg.conf.d/70-synaptics.conf'
-	sudo bash -c 'echo "Option "NaturalScrolling" "true"" >> /etc/X11/xorg.conf.d/70-synaptics.conf'
-	sudo bash -c 'echo "EndSection" >> /etc/X11/xorg.conf.d/70-synaptics.conf'
+	sudo bash -c 'echo "Section "InputClass"" >> /etc/X11/xorg.conf.d/30-touchpad.conf'
+	sudo bash -c 'echo "Identifier "devname"" >> /etc/X11/xorg.conf.d/30-touchpad.conf'
+	sudo bash -c 'echo "Driver "libinput"" >> /etc/X11/xorg.conf.d/30-touchpad.conf'
+	sudo bash -c 'echo "Option "Tapping" "on"" >> /etc/X11/xorg.conf.d/30-touchpad.conf'
+	sudo bash -c 'echo "Option "NaturalScrolling" "true"" >> /etc/X11/xorg.conf.d/30-touchpad.conf'
+	sudo bash -c 'echo "EndSection" >> /etc/X11/xorg.conf.d/30-touchpad.conf'
  
 fi
 
@@ -257,7 +258,7 @@ fi
 
 #KEYBOARD LAYOUT
 read -p $'What keyboard layout do you what to use? Give correct xkb_layout: ' LAYOUT
-sed -i "4isetxkbmap $LAYOUT" /home/$USER/.xinitrc
+sed -i "5isetxkbmap $LAYOUT" /home/$USER/.xinitrc
 
 #DONE
 echo "Installation complete"

@@ -7,8 +7,8 @@ Created to automate the installation process of my personal window manager and n
 ---
 ### Current status
 
-- Suckless-installer.sh should work as intended for Debian, Arch and Void. It will probably also work any other distribution using the same package manager.
-- Gentoo scripts should work. Last time I tried, dwm swallow patch broke the window manager. Will probably need some tinkering to get working. Partially abandoned since some essential patches won't work correctly. Might fix later. Correct order: part1 - part2 - dwm
+- Suckless-installer.sh should work as intended for Debian, Arch and Void. It will probably also work any other distribution using the same package manager. ***WORK IN PROGRESS***
+- Gentoo scripts should work. Last time I tried, dwm swallow patch broke the window manager. Will probably need some tinkering to get working. Partially abandoned since some essential patches won't work correctly. Might fix later. Correct order: part1 - part2 - dwm ***WILL GET PARTIALLY IMPLEMENTEN IN SUCKLESS-INSTALLER***
 - Archive: old script that are out of date or are full implemented in "suckless-installer.sh"
 
 ### General use
