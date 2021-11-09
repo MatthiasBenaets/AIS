@@ -228,11 +228,11 @@ if [[ "$PAD" =~ $yes ]]; then
 
 	sudo mkdir /etc/X11/xorg.conf.d
 	sudo touch /etc/X11/xorg.conf.d/30-touchpad.conf
-	sudo bash -c 'echo "Section \"InputClass\" >> /etc/X11/xorg.conf.d/30-touchpad.conf'
-	sudo bash -c 'echo "Identifier \"devname\" >> /etc/X11/xorg.conf.d/30-touchpad.conf'
+	sudo bash -c 'echo "Section \"InputClass\"" >> /etc/X11/xorg.conf.d/30-touchpad.conf'
+	sudo bash -c 'echo "Identifier \"devname\"" >> /etc/X11/xorg.conf.d/30-touchpad.conf'
 	sudo bash -c 'echo "Driver \"libinput\"" >> /etc/X11/xorg.conf.d/30-touchpad.conf'
-	sudo bash -c 'echo "Option \"Tapping\" \"on\" >> /etc/X11/xorg.conf.d/30-touchpad.conf'
-	sudo bash -c 'echo "Option \"NaturalScrolling\" \"true\" >> /etc/X11/xorg.conf.d/30-touchpad.conf'
+	sudo bash -c 'echo "Option \"Tapping\" \"on\"" >> /etc/X11/xorg.conf.d/30-touchpad.conf'
+	sudo bash -c 'echo "Option \"NaturalScrolling\" \"true\"" >> /etc/X11/xorg.conf.d/30-touchpad.conf'
 	sudo bash -c 'echo "EndSection" >> /etc/X11/xorg.conf.d/30-touchpad.conf'
  
 fi
