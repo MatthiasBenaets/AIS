@@ -29,32 +29,46 @@ PASS=null
 VM=null
 CARD=null
 BLT=null
-PAD=null
+LAPTOP=null
+SCR=null
+RES=null
 LAYOUT=null
 
 #CHOOSE DISTRIBUTION TO INSTALL SUCKLESS DESKTOP
-read -rep $'Step 1\nWhat package manager does your distro use?\n[1]-Apt\t\t(Debian)\n[2]-Pacman\t( Arch )\n[3]-XBPS\t( Void )\nWM: ' DISTRO
+#read -rep $'Step 1\nWhat package manager does your distro use?\n[1]-Apt\t\t(Debian)\n[2]-Pacman\t( Arch )\n[3]-XBPS\t( Void )\nWM: ' DISTRO
 
-until [[ "$VALID" = true ]]
-do
-	if [[ "$DISTRO" =~ ^(1|apt|Apt|APT)$ ]]; then 
-		DISTRO=1
-		VALID=true
-	elif [[ "$DISTRO" =~ ^(2|pacman|Pacman|PACMAN)$ ]]; then
-		DISTRO=2
-		VALID=true
-	elif [[ "$DISTRO" =~ ^(3|xbps|Xbps|XBPS)$ ]]; then
-		DISTRO=3
-		VALID=true
-	else
-		echo "Non-valid package manager"
-		read -p "Try again: " DISTRO
-	fi
-done
+DISTRO=cat /proc/sys/kernel/hostname
+
+if [[ "$DISTRO" =~ ^(debian|ubuntu)$ ]]; then
+	DISTRO=1
+elif [[ "$DISTRO" =~ ^(arch|manjaro)$ ]]; then
+	DISTRO=2
+elif [[ "$DISTRO" = "void" ]]; then
+	DISTRO=3
+else
+	{ echo "Package manager or distro not supported. Edit script and proceed at your own risk"; exit; }
+fi
+#until [[ "$VALID" = true ]]
+#do
+#	if [[ "$DISTRO" =~ ^(1|apt|Apt|APT)$ ]]; then 
+#		DISTRO=1
+#		VALID=true
+#	elif [[ "$DISTRO" =~ ^(2|pacman|Pacman|PACMAN)$ ]]; then
+#		DISTRO=2
+#		VALID=true
+#	elif [[ "$DISTRO" =~ ^(3|xbps|Xbps|XBPS)$ ]]; then
+#		DISTRO=3
+#		VALID=true
+#	else
+#		echo "Non-valid package manager"
+#		read -p "Try again: " DISTRO
+#	fi
+#done
 
 #BASIC USER INPUT SETTINGS
 ##Username
-read -p $'What is your username (case sensitive): ' USER
+#read -p $'What is your username (case sensitive): ' USER
+USER=$(whoami)
 ##Wifi
 read -p $'Do you need NetworkManager for wifi? [Y/n]: ' WIFI
 VALID=false
@@ -83,18 +97,18 @@ do
 		read -p 'Try again [Y/n]: ' BLT
 	fi	
 done
-##Trackpad natural scrolling
+##Natural scrolling and TLP
 VALID=false
-read -p $'Trackpad natural scrolling? [Y/n]: ' PAD
+read -p $'Is this a laptop? [Y/n]: ' LAPTOP
 until [[ "$VALID" = true ]]
 do
-	if [[ "$PAD" =~ $yes ]]; then
+	if [[ "$LAPTOP" =~ $yes ]]; then
 		VALID=true
-	elif [[ "$PAD" =~ $no ]]; then
+	elif [[ "$LAPTOP" =~ $no ]]; then
 		VALID=true
 	else
 		echo "Non-valid input"
-		read -p 'Try again [Y/n]: ' PAD
+		read -p 'Try again [Y/n]: ' LAPTOP
 	fi	
 done
 
@@ -212,18 +226,19 @@ if [[ "$BLT" =~ $yes ]]; then
 		sudo ln -s /etc/sv/bluetoothd /var/service/
 		sudo ln -s /etc/sv/dbus /var/service/
 	fi
-	
-	blueman-applet
 fi
 
-#TRACKPAD
-if [[ "$PAD" =~ $yes ]]; then
+#LAPTOP
+if [[ "$LAPTOP" =~ $yes ]]; then
 	if [ "$DISTRO" = 1 ]; then
-		sudo apt-get install libinput-bin -y
+		sudo apt-get install libinput-bin tlp -y
+		sudo systemctl enable tlp.service
 	elif [ "$DISTRO" = 2 ]; then
-		yes | sudo apt-get install libinput
+		yes | sudo apt-get install libinput tlp
+		sudo systemctl enable tlp.service
 	elif [ "$DISTRO" = 3 ]; then
-		sudo xbps-install libinput -y
+		sudo xbps-install libinput tlp -y
+		sudo ln -s /etc/sv/tlp /var/service/
 	fi
 
 	sudo mkdir /etc/X11/xorg.conf.d
@@ -234,7 +249,6 @@ if [[ "$PAD" =~ $yes ]]; then
 	sudo bash -c 'echo "Option \"Tapping\" \"on\"" >> /etc/X11/xorg.conf.d/30-touchpad.conf'
 	sudo bash -c 'echo "Option \"NaturalScrolling\" \"true\"" >> /etc/X11/xorg.conf.d/30-touchpad.conf'
 	sudo bash -c 'echo "EndSection" >> /etc/X11/xorg.conf.d/30-touchpad.conf'
- 
 fi
 
 #VIRTUAL MACHINE RESOLUTION
@@ -253,12 +267,23 @@ do
 done
 
 if [[ "$VM" =~ $yes ]]; then
-	sed -i '1ixrandr --output Virtual1 --mode 1280x960' /home/$USER/.xinitrc
+	SCR=$(xrandr | sed -n 2p | cut -d" " -f1)
+	RES=$(cvt 1920 1080 60 | sed -n -e 's/^.*"1920x1080_60"  //p"')
+	sed -i "1ixrandr --output $SCR --mode 1920x1080_60.00" /home/$USER/.xinitrc
+	sed -i "1ixrandr --addmode $SCR 1920x1080_60.00" /home/$USER/.xinitrc
+	sed -i "1ixrandr --newmode \"1920x1080\" $RES" /home/$USER/.xinitrc
+
+	sed -i '8 s/./#&/' .dwmblocks/scripts/dwmvol
+	sed -i '8s/^.//' .dwmblocks/scripts/dwmvol
 fi
 
 #KEYBOARD LAYOUT
 read -p $'What keyboard layout do you what to use? Give correct xkb_layout: ' LAYOUT
 sed -i "5isetxkbmap $LAYOUT" /home/$USER/.xinitrc
+
+#TIMEZONE FIX
+sudo rm -rf /etc/localtime
+sudo ln -s /usr/share/zoneinfo/Europe/Brussels /etc/localtime
 
 #DONE
 echo "Installation complete"

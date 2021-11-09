@@ -28,3 +28,27 @@ If script does not run, give permission:
 chmod +x [script name].sh
 ./[script name].sh
 </pre>
+
+### Notes
+
+Script is currently set up for localtime Europe/Brussels. Just comment this out or change to your timezonchange to your timezone.
+
+### TO DO
+
+- installing yay for arch
+<pre>
+git clone https://aur.archlinux.org/yay-bin
+cd yay
+makepkg -si
+yay -Y --gendb
+yay -Syu --devel
+yay -Y --devel --save
+</pre>
+
+- printer drivers (install cups system-config-printer (simple-scan; if doesn't come with printer drivers))
+
+- dual boot support for grub
+<pre>
+sudo pacman -S os-prober ntfs-3g
+sudo grub-mkconfig -o /boot/grub/grub.cfg
+</pre>
