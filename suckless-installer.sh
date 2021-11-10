@@ -30,7 +30,7 @@ VM=null
 CARD=null
 BLT=null
 LAPTOP=null
-SCR=null
+#SCR=null
 RES=null
 LAYOUT=null
 
@@ -248,11 +248,11 @@ do
 done
 
 if [[ "$VM" =~ $yes ]]; then
-	SCR=$(xrandr | sed -n 2p | cut -d" " -f1)
+	#SCR=$(xrandr | sed -n 2p | cut -d" " -f1)
 	RES=$(cvt 1920 1080 60 | sed -n -e 's/^.*"1920x1080_60.00"  //p')
-	sed -i "1ixrandr --output $SCR --mode 1920x1080_60.00" /home/$USER/.xinitrc
-	sed -i "1ixrandr --addmode $SCR 1920x1080_60.00" /home/$USER/.xinitrc
-	sed -i "1ixrandr --newmode \"1920x1080\" $RES" /home/$USER/.xinitrc
+	sed -i "1ixrandr --output Virtual1 --mode 1920x1080_60.00" /home/$USER/.xinitrc
+	sed -i "1ixrandr --addmode Virtual1 1920x1080_60.00" /home/$USER/.xinitrc
+	sed -i "1ixrandr --newmode \"1920x1080_60.00\" $RES" /home/$USER/.xinitrc
 
 	sed -i '8 s/./#&/' /home/$USER/.dwmblocks/scripts/dwmvol
 	sed -i '8s/^.//' /home/$USER/.dwmblocks/scripts/dwmvol
