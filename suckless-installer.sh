@@ -35,9 +35,7 @@ RES=null
 LAYOUT=null
 
 #CHOOSE DISTRIBUTION TO INSTALL SUCKLESS DESKTOP
-#read -rep $'Step 1\nWhat package manager does your distro use?\n[1]-Apt\t\t(Debian)\n[2]-Pacman\t( Arch )\n[3]-XBPS\t( Void )\nWM: ' DISTRO
-
-DISTRO=cat /proc/sys/kernel/hostname
+DISTRO=$(cat /proc/sys/kernel/hostname)
 
 if [[ "$DISTRO" =~ ^(debian|ubuntu)$ ]]; then
 	DISTRO=1
@@ -48,26 +46,9 @@ elif [[ "$DISTRO" = "void" ]]; then
 else
 	{ echo "Package manager or distro not supported. Edit script and proceed at your own risk"; exit; }
 fi
-#until [[ "$VALID" = true ]]
-#do
-#	if [[ "$DISTRO" =~ ^(1|apt|Apt|APT)$ ]]; then 
-#		DISTRO=1
-#		VALID=true
-#	elif [[ "$DISTRO" =~ ^(2|pacman|Pacman|PACMAN)$ ]]; then
-#		DISTRO=2
-#		VALID=true
-#	elif [[ "$DISTRO" =~ ^(3|xbps|Xbps|XBPS)$ ]]; then
-#		DISTRO=3
-#		VALID=true
-#	else
-#		echo "Non-valid package manager"
-#		read -p "Try again: " DISTRO
-#	fi
-#done
 
 #BASIC USER INPUT SETTINGS
 ##Username
-#read -p $'What is your username (case sensitive): ' USER
 USER=$(whoami)
 ##Wifi
 read -p $'Do you need NetworkManager for wifi? [Y/n]: ' WIFI
@@ -268,13 +249,13 @@ done
 
 if [[ "$VM" =~ $yes ]]; then
 	SCR=$(xrandr | sed -n 2p | cut -d" " -f1)
-	RES=$(cvt 1920 1080 60 | sed -n -e 's/^.*"1920x1080_60"  //p"')
+	RES=$(cvt 1920 1080 60 | sed -n -e 's/^.*"1920x1080_60.00"  //p')
 	sed -i "1ixrandr --output $SCR --mode 1920x1080_60.00" /home/$USER/.xinitrc
 	sed -i "1ixrandr --addmode $SCR 1920x1080_60.00" /home/$USER/.xinitrc
 	sed -i "1ixrandr --newmode \"1920x1080\" $RES" /home/$USER/.xinitrc
 
-	sed -i '8 s/./#&/' .dwmblocks/scripts/dwmvol
-	sed -i '8s/^.//' .dwmblocks/scripts/dwmvol
+	sed -i '8 s/./#&/' /home/$USER/.dwmblocks/scripts/dwmvol
+	sed -i '8s/^.//' /home/$USER/.dwmblocks/scripts/dwmvol
 fi
 
 #KEYBOARD LAYOUT
