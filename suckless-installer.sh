@@ -23,6 +23,9 @@ prompt2="PS1='\\\[\\\033[00;34m\\\]\\\u\\\[\\\033[00m\\\]\\\[\\\033[00;37m\\\]@\
 VALID=false
 DISTRO=null
 USER=null
+AUR=null
+BOOT=null
+WIN=null
 WIFI=null
 SSID=null
 PASS=null
@@ -47,9 +50,40 @@ else
 	{ echo "Package manager or distro not supported. Edit script and proceed at your own risk"; exit; }
 fi
 
-#BASIC USER INPUT SETTINGS
-##Username
 USER=$(whoami)
+
+#BASIC USER INPUT SETTINGS
+##Dual boot
+read -p $'Is this install part of a dual boot system using grub bootloader? [Y/n]' BOOT
+VALID=false
+until [[ "$VALID" =~ true ]]
+	if [[ "$BOOT" =~ $yes ]]; then
+		read -p $'with Microsoft Windows? [Y/n]' WIN
+		VALID=true
+	elif [[ "$VALID" =~ $no ]]; then
+		VALID=true
+	else
+		echo "Non-Valid input"
+		read -p 'Try again [Y/n]: ' BOOT
+	fi
+do
+done
+##AUR for arch with yay
+if [ "$DISTRO" = 2 ]; then 
+	read -p $'So you want to use Arch, èh? Also set up yay for download AUR-packages? [Y/n]' AUR
+	VALID=false
+	until [[ "$VALID" = true ]]
+	do
+		if [[ "$AUR" =~ $yes ]]; then
+			VALID=true
+		elif [[ "$AUR" =~ $no ]]; then
+			VALID=true
+		else
+			echo "Non-Valid input"
+			read -p 'Try again [Y/n]: ' AUR
+		fi
+	done	
+fi
 ##Wifi
 read -p $'Do you need NetworkManager for wifi? [Y/n]: ' WIFI
 VALID=false
@@ -109,8 +143,32 @@ if [ "$DISTRO" = 1 ]; then
 	pip3 install ueberzug
 elif [ "$DISTRO" = 2 ]; then
 	yes | sudo pacman -S make gcc libx11 libxft libxinerama libxcb xorg-setxkbmap xorg-xrandr xorg-xsetroot ttf-font-awesome sxhkd git alsa-utils pulseaudio pulsemixer feh xcompmgr ranger ueberzug vim
+	if [ "$AUR" =~ $yes ]; then
+		git clone https://aur.archlinux.org/yay-bin.git /home/$USER/.yay
+		cd /home/$USER/.yay
+		makepkg -si
+		yay -Y --gendb
+		yay -Syu --devel
+		yay -Y --devel --save
+	fi
 elif [ "$DISTRO" = 3 ]; then
 	sudo xbps-install xorg make gcc pkg-config libX11-devel libXft-devel libXinerama-devel setxkbmap xsetroot font-awesome sxhkd git alsa-utils pulseaudio pulsemixer feh compton ranger ueberzug vim -y
+fi
+
+#DUALBOOT
+if [[ "$BOOT" =~ $yes ]]; then
+	if [[ "$WIN" =~ $yes ]]; then
+		if [ "$DISTRO" = 1 ]; then
+			sudo apt install os-prober ntfs-3g -y
+		elif [ "$DISTRO" = 2 ]; then
+			yes | sudo pacman -S os-prober ntfs-3g
+		elif [ "$DISTRO" = 3 ]; then
+			sudo xbps-install os-prober ntfs-3g -y
+		fi
+		#Any issues with os-prober/ update-grub: add line "sudo grub-mkconfig -o /boot/grub/grub.cfg" accordingly. 
+		sudo os-prober
+	fi
+	sudo update-grub
 fi
 
 #SETTING UP WIFI
