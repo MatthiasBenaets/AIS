@@ -57,6 +57,7 @@ USER=$(whoami)
 read -p $'Is this install part of a dual boot system using grub bootloader? [Y/n]' BOOT
 VALID=false
 until [[ "$VALID" =~ true ]]
+do
 	if [[ "$BOOT" =~ $yes ]]; then
 		read -p $'with Microsoft Windows? [Y/n]' WIN
 		VALID=true
