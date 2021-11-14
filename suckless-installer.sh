@@ -66,7 +66,6 @@ until [[ "$VALID" =~ true ]]
 		echo "Non-Valid input"
 		read -p 'Try again [Y/n]: ' BOOT
 	fi
-do
 done
 ##AUR for arch with yay
 if [ "$DISTRO" = 2 ]; then 
