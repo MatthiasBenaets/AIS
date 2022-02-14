@@ -25,7 +25,7 @@ rc-update add elogind boot
 git clone https://www.github.com/MatthiasBenaets/dwm /home/$user/dwm
 git clone https://www.github.com/MatthiasBenaets/st /home/$user/st
 git clone https://www.github.com/MatthiasBenaets/dmenu /home/$user/dmenu
-git clone https://www.github.com/MatthiasBenaets/dotfiles /home/$user/dotfiles
+git clone https://www.github.com/MatthiasBenaets/old-dotfiles /home/$user/dotfiles
 
 #Edit xinitrc
 sleep 1s

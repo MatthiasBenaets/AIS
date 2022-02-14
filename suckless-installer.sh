@@ -193,7 +193,7 @@ git clone https://www.github.com/MatthiasBenaets/dwm /home/$USER/.dwm
 git clone https://www.github.com/MatthiasBenaets/dwmblocks /home/$USER/.dwmblocks
 git clone https://www.github.com/MatthiasBenaets/st /home/$USER/.st
 git clone https://www.github.com/MatthiasBenaets/dmenu /home/$USER/.dmenu
-git clone https://www.github.com/MatthiasBenaets/dotfiles /home/$USER/.dotfiles
+git clone https://www.github.com/MatthiasBenaets/old-dotfiles /home/$USER/.dotfiles
 ##Installing repositories
 cd /home/$USER/.dwm
 sudo make clean install
